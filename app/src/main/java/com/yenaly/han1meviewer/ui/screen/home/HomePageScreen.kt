@@ -105,6 +105,9 @@ import com.yenaly.han1meviewer.ui.preview.fakeBanner
 import com.yenaly.han1meviewer.ui.preview.fakeCategories
 import com.yenaly.han1meviewer.ui.preview.fakeHomePageVideos
 import com.yenaly.han1meviewer.ui.screen.RetryableImage
+import com.yenaly.han1meviewer.ui.screen.rememberCardResponsiveWidth
+import com.yenaly.han1meviewer.ui.theme.SpacingLarge
+import com.yenaly.han1meviewer.ui.theme.SpacingNormal
 import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
 import com.yenaly.yenaly_libs.utils.putSpValue
 import kotlinx.coroutines.delay
@@ -489,8 +492,8 @@ fun BannerCarousel(
                         contentDescription = item.title,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(R.drawable.akarin),
-                        error = painterResource(R.drawable.baseline_error_outline_24)
+                        placeholder = painterResource(R.drawable.h_chan_loading),
+                        error = painterResource(R.drawable.h_chan_load_failed)
                     )
 
                     // 底部渐变遮罩
@@ -613,16 +616,19 @@ fun CategoryRow(
         // 横向视频列表
         // B网站架构不知道是什么狗屎，会出现重复视频元素，这里去重
         val uniqueVideos = videos.distinctBy { it.videoCode }
+        val (cardWidth, _) = rememberCardResponsiveWidth()
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(0.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(SpacingNormal),
+            contentPadding = PaddingValues(horizontal = SpacingLarge)
         ) {
             items(uniqueVideos, key = { it.videoCode }) { video ->
                 VideoCardItem(
+                    modifier = Modifier.width(cardWidth),
                     videoItem = video,
                     isHorizontalCard = true,
                     onClickVideosItem = onVideoClick,
-                    onLongClickVideosItem = onVideoLongClick
+                    onLongClickVideosItem = {_, _ ->}
                 )
             }
         }
@@ -942,6 +948,7 @@ fun HomePageContent(
 @Composable
 fun HomePageScreen(
     viewModel: MainViewModel,
+    isDrawerOpen: Boolean,
     onOpenDrawer: () -> Unit,
     onNavigateToPreview: () -> Unit,
     onNavigateToSearch: (String) -> Unit,
@@ -984,7 +991,7 @@ fun HomePageScreen(
             isRefreshing = false
         }
     }
-    BackHandler {
+    BackHandler(enabled = !isDrawerOpen) {
         onShowExitDialog()
     }
 

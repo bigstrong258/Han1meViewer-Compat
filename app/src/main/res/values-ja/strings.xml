@@ -99,6 +99,13 @@
     <string name="player_settings">プレイヤー設定</string>
     <string name="tablet_mode">タブレットモード</string>
     <string name="tablet_mode_summary">有効にすると動画ページがタブレットレイアウトで表示され、より広い視聴エリアを提供します</string>
+    <string name="search_grid_columns_title">ビデオグリッド列数</string>
+    <string name="search_grid_columns_summary">タブレットモードのみ有効。画面幅に応じて検索、後で見る、お気に入り動画、チャンネル登録ページの列数を調整します</string>
+    <string name="search_grid_columns_dialog_hint">画面幅に応じてビデオグリッドの列数を設定</string>
+    <string name="search_grid_columns_current_width_hint">現在のデバイス幅参考：縦向き約 %1$ddp、横向き約 %2$ddp</string>
+    <string name="search_grid_columns_current_bucket_hint">現在のヒットバケット：縦向き %1$s = %2$d 列、横向き %3$s = %4$d 列</string>
+    <string name="search_grid_columns_current_portrait">現在の縦向き</string>
+    <string name="search_grid_columns_current_landscape">現在の横向き</string>
     <string name="current_slide_sensitivity">現在の感度：%s</string>
     <string name="network">ネットワーク</string>
     <string name="proxy">プロキシ</string>
@@ -226,6 +233,23 @@
     <string name="watch_history_watched_at">視聴日時 %1$s</string>
     <string name="watch_history_released_at">公開日時 %1$s</string>
     <string name="watch_history_progress_minutes">約 %1$d 分視聴しました</string>
+    <string name="online">オンライン</string>
+    <string name="popular">人気</string>
+    <string name="watch_history_online_help">下に引いて更新し、下端までスクロールすると続きを読み込みます。</string>
+    <string name="creator_center">クリエイターセンター</string>
+    <string name="uploaded_videos">公開済み</string>
+    <string name="uploading_videos">審査中</string>
+    <string name="creator_center_help">下に引いて更新し、下端までスクロールすると続きを読み込みます。審査中の動画には現在の審査状態が表示されます。アプリでの動画アップロード機能は提供していません。ウェブからアップロードしてください。アップロード前に重複がないか確認し、動画メタデータを正しく入力してください。</string>
+    <string name="creator_uploaded_empty_title">公開済みの動画はまだありません</string>
+    <string name="creator_uploaded_empty_description">審査を通過して公開された動画がここに表示されます。</string>
+    <string name="creator_uploaded_load_failed">公開済み動画の読み込みに失敗しました。タップして再試行してください。</string>
+    <string name="creator_uploading_empty_title">審査中の動画はありません</string>
+    <string name="creator_uploading_empty_description">キュー中、処理待ち、変換中の動画がここに表示されます。</string>
+    <string name="creator_uploading_load_failed">審査中動画の読み込みに失敗しました。タップして再試行してください。</string>
+    <string name="creator_status_uploaded">公開済み</string>
+    <string name="creator_status_queued">キュー中</string>
+    <string name="creator_status_pending">処理待ち</string>
+    <string name="creator_status_transcoding">変換中</string>
     <string name="speed">再生速度</string>
     <string name="cancel_thumb_up_success">高評価解除成功！</string>
     <string name="thumb_up_success">高評価成功！</string>
@@ -285,6 +309,7 @@ hanime1.me以外のドメインは、特定の時間帯にhanime1.meにリダイ
     <string name="do_not_use_japan_ip">日本のIPアドレスは使用しないでください!!!</string>
     <string name="website_blocked_msg">ここに表示されているということは、サイトが強化されたということ。復旧できるかは運次第…</string>
     <string name="not_logged_in_currently">現在未ログイン</string>
+    <string name="login_state_expired">ログイン状態の有効期限が切れたため、自動的にログアウトしました。再度ログインしてください。</string>
     <string name="parse_error_msg">このURLの解析は少し異なるかも…</string>
     <string name="network_unstable_msg">ネットワークが不安定かもしれません、再読み込み！</string>
     <string name="unknown_download_error">不明なダウンロードエラー</string>
@@ -351,6 +376,25 @@ hanime1.me以外のドメインは、特定の時間帯にhanime1.meにリダイ
     <string name="disable_comments_title">コメント欄非表示</string>
     <string name="default_video_quilty">デフォルト解像度</string>
     <string name="my_subscribe">マイフォロー</string>
+    <string name="subscribed_artists_count">フォロー中の作者（%1$d）</string>
+    <string name="swipe_more">右へスワイプ</string>
+    <string name="my_account">マイ</string>
+    <string name="username">ユーザー名</string>
+    <string name="logout">ログアウト</string>
+    <string name="change_avatar">アバターを変更</string>
+    <string name="account_stats_summary">%1$d 人の購読者 • %2$d 本の動画</string>
+    <string name="edit_profile">プロフィール編集</string>
+    <string name="update_profile">プロフィール更新</string>
+    <string name="change_password">パスワード変更</string>
+    <string name="old_password">現在のパスワード</string>
+    <string name="new_password">新しいパスワード</string>
+    <string name="confirm_new_password">新しいパスワードを確認</string>
+    <string name="password_not_match">新しいパスワードが一致しません</string>
+    <string name="forgot_password">パスワードをお忘れですか？</string>
+    <string name="crop_avatar">アバターを切り抜く</string>
+    <string name="updating">更新中…</string>
+    <string name="changing">変更中…</string>
+    <string name="uploading">アップロード中…</string>
     <string name="title_activity_qrcode_scanner">手動クッキー入力</string>
     <string name="scan_for_cookies">手動クッキー入力</string>
     <string name="import_cookies_intro">このインポート方法はcloudflareによるログイン遮断も緩和可能\n1. ウェブ版ログイン後、Cookiesを取得（方法は問わず、携帯/PC可）。\n2. フォーマットは大体図の通り。注意！前後にダブルクォーテーションを含まず、フォーマット後のCookiesシーケンスではないこと。\n「手動インポート」ボタンを使用。\nインポート後ページ再読み込みで未ログイン状態の場合は、Cookiesを確認。</string>
@@ -600,6 +644,11 @@ hanime1.me以外のドメインは、特定の時間帯にhanime1.meにリダイ
     <string name="search_artist_ignore_video_type_summary">有効にすると、詳細ページのアバターをクリックしてアーティストを検索する際、動画タイプが含まれなくなります。</string>
     <string name="show_played_indicator">再生状態マークを表示</string>
     <string name="show_played_indicator_summary">有効にすると、検索結果ページの動画カバー右上に再生済みマークが表示されます</string>
+    <string name="horizontal_card_count_title">横スクロール一覧の表示カード数</string>
+    <string name="horizontal_card_count_summary">ホームや関連動画など、横スクロール一覧で一度に見えるカード数を調整します</string>
+    <string name="horizontal_card_count_dialog_hint">画面幅ごとに、横スクロール一覧で一度に見えるカード数を設定します</string>
+    <string name="horizontal_card_count_current_width_hint">現在のコンテナ幅の目安：約 %1$ddp</string>
+    <string name="horizontal_card_count_current_bucket_hint">現在の適用範囲：%1$s = %2$.1f 枚</string>
     <string name="video_group_error">動画グループ取得エラー：</string>
     <string name="video_group_empty">動画グループが空です</string>
     <string name="default_group_rename_not_allowed">デフォルトグループ（%s）は名前変更できません！</string>
@@ -708,4 +757,7 @@ hanime1.me以外のドメインは、特定の時間帯にhanime1.meにリダイ
     <string name="theme_color_yellow">ゴールデンイエロー</string>
     <string name="theme_color_high_contrast">ハイコントラスト</string>
     <string name="restart_needed">プログラムを再起動する必要があります。そうしないと動作しません！</string>
+    <string name="played">閲覧済み</string>
+    <string name="local">ローカル</string>
+    <string name="current_bucket">現在の適用範囲</string>
 </resources>

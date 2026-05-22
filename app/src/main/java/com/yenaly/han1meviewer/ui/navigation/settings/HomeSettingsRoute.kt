@@ -51,8 +51,8 @@ import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.component.ConfirmDialog
 import com.yenaly.han1meviewer.ui.screen.settings.HomeSettingsScreen
-import com.yenaly.han1meviewer.ui.screen.settings.HomeSettingsUiState
-import com.yenaly.han1meviewer.ui.screen.settings.LicenseDialog
+import com.yenaly.han1meviewer.ui.screen.settings.dialog.LicenseDialog
+import com.yenaly.han1meviewer.ui.screen.settings.model.HomeSettingsUiState
 import com.yenaly.han1meviewer.ui.theme.ThemeColorPreset
 import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
 import com.yenaly.han1meviewer.util.ThemeUtils
@@ -85,6 +85,14 @@ private const val HOME_DISABLE_COMMENTS = "disable_comments"
 private const val HOME_USE_LOCK_SCREEN = "use_lock_screen"
 private const val HOME_APP_LANGUAGE = "app_language"
 private const val HOME_THEME_COLOR = "theme_color"
+private const val HOME_SEARCH_GRID_COLUMNS_COMPACT = "search_grid_columns_compact"
+private const val HOME_SEARCH_GRID_COLUMNS_MEDIUM = "search_grid_columns_medium"
+private const val HOME_SEARCH_GRID_COLUMNS_EXPANDED = "search_grid_columns_expanded"
+private const val HOME_SEARCH_GRID_COLUMNS_LARGE = "search_grid_columns_large"
+private const val HOME_HORIZONTAL_CARD_COUNT_NARROW = "horizontal_card_count_narrow"
+private const val HOME_HORIZONTAL_CARD_COUNT_COMPACT = "horizontal_card_count_compact"
+private const val HOME_HORIZONTAL_CARD_COUNT_MEDIUM = "horizontal_card_count_medium"
+private const val HOME_HORIZONTAL_CARD_COUNT_EXPANDED = "horizontal_card_count_expanded"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -231,6 +239,20 @@ fun HomeSettingsRouteScreen(
         },
         onCollapseDownloadedGroupChange = {
             saveBoolean(HOME_COLLAPSE_DOWNLOADED_GROUP, it)
+            refreshKey++
+        },
+        onSearchGridColumnsConfigChange = { config ->
+            saveInt(HOME_SEARCH_GRID_COLUMNS_COMPACT, config.compactColumns)
+            saveInt(HOME_SEARCH_GRID_COLUMNS_MEDIUM, config.mediumColumns)
+            saveInt(HOME_SEARCH_GRID_COLUMNS_EXPANDED, config.expandedColumns)
+            saveInt(HOME_SEARCH_GRID_COLUMNS_LARGE, config.largeColumns)
+            refreshKey++
+        },
+        onHorizontalCardCountConfigChange = { config ->
+            saveString(HOME_HORIZONTAL_CARD_COUNT_NARROW, config.narrowCount.toString())
+            saveString(HOME_HORIZONTAL_CARD_COUNT_COMPACT, config.compactCount.toString())
+            saveString(HOME_HORIZONTAL_CARD_COUNT_MEDIUM, config.mediumCount.toString())
+            saveString(HOME_HORIZONTAL_CARD_COUNT_EXPANDED, config.expandedCount.toString())
             refreshKey++
         },
         onThemeColorChange = { key ->
@@ -477,6 +499,8 @@ private fun buildHomeSettingsUiState(
         "en" -> context.getString(R.string.english_lang)
         else -> appLanguageValue
     }
+    val searchGridColumnsConfig = Preferences.searchGridColumnsConfig
+    val horizontalCardCountConfig = Preferences.horizontalCardCountConfig
     return HomeSettingsUiState(
         videoLanguage = Preferences.videoLanguage,
         videoLanguageLabel = videoLanguageLabel,
@@ -513,5 +537,19 @@ private fun buildHomeSettingsUiState(
         dynamicColorEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
         themeColorKey = Preferences.themeColor ?: ThemeColorPreset.DEFAULT.key,
         themeColorName = context.getString(ThemeColorPreset.fromKey(Preferences.themeColor).displayNameRes),
+        searchGridColumnsSummary = listOf(
+            searchGridColumnsConfig.compactColumns,
+            searchGridColumnsConfig.mediumColumns,
+            searchGridColumnsConfig.expandedColumns,
+            searchGridColumnsConfig.largeColumns,
+        ).joinToString(" / "),
+        searchGridColumnsConfig = searchGridColumnsConfig,
+        horizontalCardCountSummary = listOf(
+            horizontalCardCountConfig.narrowCount,
+            horizontalCardCountConfig.compactCount,
+            horizontalCardCountConfig.mediumCount,
+            horizontalCardCountConfig.expandedCount,
+        ).joinToString(" / "),
+        horizontalCardCountConfig = horizontalCardCountConfig,
     )
 }

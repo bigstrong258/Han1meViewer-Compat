@@ -100,6 +100,17 @@
     <string name="player_settings">播放器設定</string>
     <string name="tablet_mode">平板模式</string>
     <string name="tablet_mode_summary">開啟後影片頁面將以平板佈局顯示，提供更大觀看區域</string>
+    <string name="search_grid_columns_title">影片網格列數</string>
+    <string name="search_grid_columns_summary">僅在平板模式下生效，可依螢幕寬度調整搜尋、稍後觀看、喜歡影片與訂閱頁的列數</string>
+    <string name="search_grid_columns_dialog_hint">依不同螢幕寬度設定影片網格的列數</string>
+    <string name="search_grid_columns_current_width_hint">目前裝置寬度參考：直向約 %1$ddp，橫向約 %2$ddp</string>
+    <string name="search_grid_columns_current_bucket_hint">目前命中檔位：直向 %1$s = %2$d 欄，橫向 %3$s = %4$d 欄</string>
+    <string name="search_grid_columns_current_portrait">目前直向</string>
+    <string name="search_grid_columns_current_landscape">目前橫向</string>
+    <string name="search_grid_columns_range_compact" translatable="false">≤600dp</string>
+    <string name="search_grid_columns_range_medium" translatable="false">601-900dp</string>
+    <string name="search_grid_columns_range_expanded" translatable="false">901-1200dp</string>
+    <string name="search_grid_columns_range_large" translatable="false">≥1201dp</string>
     <string name="current_slide_sensitivity">當前靈敏度：%s</string>
     <string name="network">網路</string>
     <string name="proxy">代理</string>
@@ -232,6 +243,23 @@
     <string name="watch_history_watched_at">觀看於 %1$s</string>
     <string name="watch_history_released_at">發佈於 %1$s</string>
     <string name="watch_history_progress_minutes">已觀看約 %1$d 分鐘</string>
+    <string name="online">在線</string>
+    <string name="popular">熱門</string>
+    <string name="watch_history_online_help">下拉重新整理，滑到底部自動載入更多。</string>
+    <string name="creator_center">創作中心</string>
+    <string name="uploaded_videos">已上傳</string>
+    <string name="uploading_videos">審核中</string>
+    <string name="creator_center_help">下拉重新整理，滑到底部自動載入更多。審核中的影片會顯示當前審核狀態。APP端不會做影片上傳功能，請在網頁端上傳。上傳前請檢查是否已經被上傳過，並正確填寫影片元資料。</string>
+    <string name="creator_uploaded_empty_title">暫無已上傳影片</string>
+    <string name="creator_uploaded_empty_description">通過審核並成功上傳的影片會顯示在這裡。</string>
+    <string name="creator_uploaded_load_failed">載入已上傳影片失敗，點擊重試</string>
+    <string name="creator_uploading_empty_title">暫無審核中影片</string>
+    <string name="creator_uploading_empty_description">排隊中、待處理或轉檔中的影片會顯示在這裡。</string>
+    <string name="creator_uploading_load_failed">載入審核中影片失敗，點擊重試</string>
+    <string name="creator_status_uploaded">已上傳</string>
+    <string name="creator_status_queued">排隊中</string>
+    <string name="creator_status_pending">待處理</string>
+    <string name="creator_status_transcoding">轉檔中</string>
     <string name="speed">倍速</string>
     <string name="cancel_thumb_up_success">取消點讚成功！</string>
     <string name="thumb_up_success">點讚成功！</string>
@@ -257,7 +285,7 @@
     <string name="name_with_colon">名稱：</string>
     <string name="quality_with_colon">畫質：</string>
     <string name="after_download_tips">下載完畢後可以在「下載」介面找到下載後的影片，「設定」介面裡有詳細儲存路徑</string>
-    <string name="traditional_chinese" translatable="false">正體中文</string>
+    <string name="traditional_chinese" translatable="false">繁體中文</string>
     <string name="restart_or_not_working">修改%s需要重啟程式，否則不起作用！</string>
     <string name="sure_to_clear">確定要清除嗎？</string>
     <string name="sure_to_clear_cache">確定要清除快取嗎？</string>
@@ -292,6 +320,7 @@
     <string name="do_not_use_japan_ip">不要使用日本IP位址!!!</string>
     <string name="website_blocked_msg">看到這裡說明他們網站被加固了，能不能恢復只能聽天命了…</string>
     <string name="not_logged_in_currently">當前未登入</string>
+    <string name="login_state_expired">登入狀態已失效，已自動登出，請重新登入</string>
     <string name="parse_error_msg">可能這個網址解析起來不大一樣…</string>
     <string name="network_unstable_msg">可能是你的網路不穩定，多刷新！</string>
     <string name="unknown_download_error">未知下載錯誤</string>
@@ -374,6 +403,25 @@
     <string name="disable_comments_sum">啟用後，影片詳情頁將不再顯示評論區</string>
     <string name="default_video_quilty">預設解析度</string>
     <string name="my_subscribe">我的訂閱</string>
+    <string name="subscribed_artists_count">已訂閱作者（%1$d）</string>
+    <string name="swipe_more">向右滑動</string>
+    <string name="my_account">我的</string>
+    <string name="username">用戶名稱</string>
+    <string name="logout">登出</string>
+    <string name="change_avatar">更改頭像</string>
+    <string name="account_stats_summary">%1$d 位訂閱者 • %2$d 部影片</string>
+    <string name="edit_profile">編輯個人檔案</string>
+    <string name="update_profile">更新個人檔案</string>
+    <string name="change_password">更改密碼</string>
+    <string name="old_password">舊密碼</string>
+    <string name="new_password">新密碼</string>
+    <string name="confirm_new_password">確認新密碼</string>
+    <string name="password_not_match">兩次輸入的新密碼不一致</string>
+    <string name="forgot_password">忘記密碼？</string>
+    <string name="crop_avatar">裁剪頭像</string>
+    <string name="updating">更新中…</string>
+    <string name="changing">更改中…</string>
+    <string name="uploading">上傳中…</string>
     <string name="title_activity_qrcode_scanner">手動錄入cookies</string>
     <string name="scan_for_cookies">手動錄入cookies</string>
     <string name="cookies_import_desc">引導圖片</string>
@@ -632,6 +680,15 @@
     <string name="search_artist_ignore_video_type_summary">開啟後，點選詳細頁頭像搜尋藝術家時，不再附帶影片類型。</string>
     <string name="show_played_indicator">顯示播放狀態標記</string>
     <string name="show_played_indicator_summary">開啟後將在搜尋結果頁影片封面右上角顯示已播放標記</string>
+    <string name="horizontal_card_count_title">橫向列表可見卡片數</string>
+    <string name="horizontal_card_count_summary">可調整首頁與影片詳情相關影片等橫向列表一次可見的卡片數量</string>
+    <string name="horizontal_card_count_dialog_hint">依不同螢幕寬度設定橫向列表一次可見的卡片數量</string>
+    <string name="horizontal_card_count_current_width_hint">目前容器寬度參考：約 %1$ddp</string>
+    <string name="horizontal_card_count_current_bucket_hint">目前命中檔位：%1$s = %2$.1f 張</string>
+    <string name="horizontal_card_count_range_narrow" translatable="false">&lt;350dp</string>
+    <string name="horizontal_card_count_range_compact" translatable="false">350-599dp</string>
+    <string name="horizontal_card_count_range_medium" translatable="false">600-839dp</string>
+    <string name="horizontal_card_count_range_expanded" translatable="false">≥840dp</string>
     <string name="video_group_error">取得影片群組錯誤：</string>
     <string name="video_group_empty">影片群組為空</string>
     <string name="default_group_rename_not_allowed">預設群組（%s）不允許重新命名！</string>
@@ -749,4 +806,7 @@
     <string name="theme_color_yellow">鹹蛋黃</string>
     <string name="theme_color_high_contrast">高對比</string>
     <string name="restart_needed">需要重啟程序，否則不起作用！</string>
+    <string name="played">已觀看</string>
+    <string name="local">本地</string>
+    <string name="current_bucket">目前命中檔位</string>
 </resources>

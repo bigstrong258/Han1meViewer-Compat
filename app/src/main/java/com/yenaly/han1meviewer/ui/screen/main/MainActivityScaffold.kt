@@ -1,5 +1,6 @@
 package com.yenaly.han1meviewer.ui.screen.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -49,6 +49,7 @@ fun MainActivityScaffold(
     isLoading: Boolean,
     currentSite: String,
     onAvatarClick: () -> Unit,
+    onAvatarLongClick: () -> Unit,
     onSwitchSiteClick: () -> Unit,
     onDrawerItemSelected: (MainDrawerDestination) -> Boolean,
     content: @Composable () -> Unit,
@@ -64,7 +65,6 @@ fun MainActivityScaffold(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                modifier = Modifier.navigationBarsPadding(),
                 drawerContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             ) {
                 MainDrawerHeader(
@@ -74,6 +74,7 @@ fun MainActivityScaffold(
                     isLoading = isLoading,
                     currentSite = currentSite,
                     onAvatarClick = onAvatarClick,
+                    onAvatarLongClick = onAvatarLongClick,
                     onSwitchSiteClick = onSwitchSiteClick,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -90,6 +91,7 @@ fun MainActivityScaffold(
                             MainDrawerDestination.FavVideo,
                             MainDrawerDestination.Playlist,
                             MainDrawerDestination.Subscription,
+                            MainDrawerDestination.CreatorCenter,
                         ),
                         selectedDestination = selectedDestination,
                         onItemClick = { destination ->
@@ -137,6 +139,13 @@ fun MainActivityScaffold(
                     )
                 }
             }
+        }
+
+        BackHandler(
+            enabled = drawerState.currentValue == DrawerValue.Open ||
+                drawerState.targetValue == DrawerValue.Open,
+        ) {
+            scope.launch { drawerState.close() }
         }
     }
 }
@@ -220,6 +229,7 @@ private fun MainActivityScaffoldPreview() {
             isLoading = false,
             currentSite = "https://hanime1.me/",
             onAvatarClick = {},
+            onAvatarLongClick = {},
             onSwitchSiteClick = {},
             onDrawerItemSelected = { true },
         ) {

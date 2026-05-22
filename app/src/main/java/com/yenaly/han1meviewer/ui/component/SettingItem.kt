@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yenaly.han1meviewer.ui.preview.ComponentPreview
+import kotlin.math.roundToInt
 
 @Composable
 fun SettingSwitchItem(
@@ -31,11 +32,13 @@ fun SettingSwitchItem(
     modifier: Modifier = Modifier,
     summary: String? = null,
     iconRes: Int? = null,
+    enabled: Boolean = true,
 ) {
+    val contentAlpha = if (enabled) 1f else 0.38f
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onCheckedChange(!checked) }
+            .clickable(enabled = enabled) { onCheckedChange(!checked) }
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -44,7 +47,7 @@ fun SettingSwitchItem(
             Icon(
                 painter = painterResource(it),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = contentAlpha),
                 modifier = Modifier.size(22.dp),
             )
         }
@@ -52,17 +55,21 @@ fun SettingSwitchItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha),
             )
             if (!summary.isNullOrBlank()) {
                 Text(
                     text = summary,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha),
                 )
             }
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            enabled = enabled
+        )
     }
 }
 
@@ -171,9 +178,15 @@ fun SettingSliderItem(
     valueRange: IntRange,
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    step: Int = 1,
     summary: String? = null,
     iconRes: Int? = null,
 ) {
+    val totalSteps = if (step > 0) {
+        ((valueRange.last - valueRange.first) / step) - 1
+    } else {
+        0
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -207,13 +220,12 @@ fun SettingSliderItem(
         }
         Slider(
             value = value.toFloat(),
-            onValueChange = { onValueChange(it.toInt()) },
+            onValueChange = { onValueChange(it.roundToInt()) },
             valueRange = valueRange.first.toFloat()..valueRange.last.toFloat(),
-            steps = (valueRange.last - valueRange.first - 1).coerceAtLeast(0),
+            steps = totalSteps.coerceAtLeast(0),
         )
     }
 }
-
 @Composable
 fun SettingChoiceItem(
     title: String,

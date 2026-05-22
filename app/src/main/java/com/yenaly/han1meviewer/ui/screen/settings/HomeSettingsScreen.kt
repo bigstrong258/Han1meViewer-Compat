@@ -18,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.yenaly.han1meviewer.HorizontalCardCountConfig
 import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.SearchGridColumnsConfig
 import com.yenaly.han1meviewer.ui.component.ChoiceDialog
 import com.yenaly.han1meviewer.ui.component.SettingInfoItem
 import com.yenaly.han1meviewer.ui.component.SettingNavigationItem
@@ -26,39 +28,10 @@ import com.yenaly.han1meviewer.ui.component.SettingSliderItem
 import com.yenaly.han1meviewer.ui.component.SettingSwitchItem
 import com.yenaly.han1meviewer.ui.component.lazy.LazyColumn
 import com.yenaly.han1meviewer.ui.preview.ComponentPreview
+import com.yenaly.han1meviewer.ui.screen.settings.dialog.HorizontalCardCountDialog
+import com.yenaly.han1meviewer.ui.screen.settings.dialog.SearchGridColumnsDialog
+import com.yenaly.han1meviewer.ui.screen.settings.model.HomeSettingsUiState
 import com.yenaly.han1meviewer.ui.theme.ThemeColorPreset
-
-data class HomeSettingsUiState(
-    val videoLanguage: String,
-    val videoLanguageLabel: String,
-    val defaultVideoQuality: String,
-    val darkMode: String,
-    val darkModeLabel: String,
-    val appLanguage: String,
-    val appLanguageLabel: String,
-    val allowPipMode: Boolean,
-    val allowResumePlayback: Boolean,
-    val showPlayedIndicator: Boolean,
-    val searchArtistIgnoreVideoType: Boolean,
-    val disableMobileDataWarning: Boolean,
-    val disablePredictiveBack: Boolean,
-    val tabletMode: Boolean,
-    val disableComments: Boolean,
-    val collapseDownloadedGroup: Boolean,
-    val useDynamicColor: Boolean,
-    val useCIUpdateChannel: Boolean,
-    val useAnalytics: Boolean,
-    val useLockScreen: Boolean,
-    val fakeLauncherIconName: String,
-    val updateSummary: String,
-    val cacheSummary: String,
-    val versionSummary: String,
-    val updatePopupIntervalSummary: String,
-    val updatePopupIntervalDays: Int,
-    val dynamicColorEnabled: Boolean,
-    val themeColorKey: String,
-    val themeColorName: String,
-)
 
 private enum class HomeSettingsChoiceDialog {
     VideoLanguage,
@@ -83,6 +56,8 @@ fun HomeSettingsScreen(
     onTabletModeChange: (Boolean) -> Unit,
     onDisableCommentsChange: (Boolean) -> Unit,
     onCollapseDownloadedGroupChange: (Boolean) -> Unit,
+    onSearchGridColumnsConfigChange: (SearchGridColumnsConfig) -> Unit,
+    onHorizontalCardCountConfigChange: (HorizontalCardCountConfig) -> Unit,
     onUseCIUpdateChannelChange: (Boolean) -> Unit,
     onUseAnalyticsChange: (Boolean) -> Unit,
     onUseLockScreenChange: (Boolean) -> Unit,
@@ -103,6 +78,8 @@ fun HomeSettingsScreen(
     onOpenForum: () -> Unit,
 ) {
     var activeDialog by rememberSaveable { mutableStateOf<HomeSettingsChoiceDialog?>(null) }
+    var showSearchGridColumnsDialog by rememberSaveable { mutableStateOf(false) }
+    var showHorizontalCardCountDialog by rememberSaveable { mutableStateOf(false) }
 
     ChoiceDialog(
         visible = activeDialog == HomeSettingsChoiceDialog.VideoLanguage,
@@ -177,6 +154,28 @@ fun HomeSettingsScreen(
         },
     )
 
+    if (showSearchGridColumnsDialog) {
+        SearchGridColumnsDialog(
+            initialConfig = state.searchGridColumnsConfig,
+            onDismiss = { showSearchGridColumnsDialog = false },
+            onConfirm = {
+                showSearchGridColumnsDialog = false
+                onSearchGridColumnsConfigChange(it)
+            },
+        )
+    }
+
+    if (showHorizontalCardCountDialog) {
+        HorizontalCardCountDialog(
+            initialConfig = state.horizontalCardCountConfig,
+            onDismiss = { showHorizontalCardCountDialog = false },
+            onConfirm = {
+                showHorizontalCardCountDialog = false
+                onHorizontalCardCountConfigChange(it)
+            },
+        )
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 8.dp),
@@ -227,6 +226,15 @@ fun HomeSettingsScreen(
             )
         }
         item {
+            SettingNavigationItem(
+                title = stringResource(R.string.horizontal_card_count_title),
+                summary = stringResource(R.string.horizontal_card_count_summary),
+                valueText = state.horizontalCardCountSummary,
+                iconRes = R.drawable.baseline_row_24,
+                onClick = { showHorizontalCardCountDialog = true },
+            )
+        }
+        item {
             SettingSwitchItem(
                 title = stringResource(R.string.search_artist_ignore_video_type),
                 summary = stringResource(R.string.search_artist_ignore_video_type_summary),
@@ -247,10 +255,11 @@ fun HomeSettingsScreen(
         item {
             SettingSwitchItem(
                 title = stringResource(R.string.disable_predictive_back_title),
-                summary = stringResource(R.string.disable_predictive_back_summary),
+                summary = "暂不可用 Temporarily unavailable",
                 checked = state.disablePredictiveBack,
                 iconRes = R.drawable.ic_baseline_arrow_back_24,
                 onCheckedChange = onDisablePredictiveBackChange,
+                enabled = false
             )
         }
         item {
@@ -261,6 +270,17 @@ fun HomeSettingsScreen(
                 iconRes = R.drawable.ic_baseline_tablet_24,
                 onCheckedChange = onTabletModeChange,
             )
+        }
+        if (state.tabletMode) {
+            item {
+                SettingNavigationItem(
+                    title = stringResource(R.string.search_grid_columns_title),
+                    summary = stringResource(R.string.search_grid_columns_summary),
+                    valueText = state.searchGridColumnsSummary,
+                    iconRes = R.drawable.baseline_grid_24,
+                    onClick = { showSearchGridColumnsDialog = true },
+                )
+            }
         }
         item {
             SettingNavigationItem(
@@ -495,6 +515,10 @@ private fun HomeSettingsScreenPreview() {
                 dynamicColorEnabled = true,
                 themeColorKey = "default",
                 themeColorName = "預設（暖紅）",
+                searchGridColumnsSummary = "2 / 3 / 4 / 5",
+                searchGridColumnsConfig = SearchGridColumnsConfig(),
+                horizontalCardCountSummary = "1.5 / 2.1 / 4.1 / 5.1",
+                horizontalCardCountConfig = HorizontalCardCountConfig(),
             ),
             onVideoLanguageChange = {},
             onVideoQualityChange = {},
@@ -508,6 +532,8 @@ private fun HomeSettingsScreenPreview() {
             onTabletModeChange = {},
             onDisableCommentsChange = {},
             onCollapseDownloadedGroupChange = {},
+            onSearchGridColumnsConfigChange = {},
+            onHorizontalCardCountConfigChange = {},
             onUseCIUpdateChannelChange = {},
             onUseAnalyticsChange = {},
             onUseLockScreenChange = {},

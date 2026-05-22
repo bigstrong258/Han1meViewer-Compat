@@ -99,6 +99,13 @@
     <string name="player_settings">播放器设置</string>
     <string name="tablet_mode">平板模式</string>
     <string name="tablet_mode_summary">开启后影片页面将以平板布局显示，提供更大观看区域</string>
+    <string name="search_grid_columns_title">影片网格列数</string>
+    <string name="search_grid_columns_summary">仅在平板模式下生效，可依屏幕宽度调整搜索、稍后观看、喜欢影片与订阅页的列数</string>
+    <string name="search_grid_columns_dialog_hint">依不同屏幕宽度设置影片网格的列数</string>
+    <string name="search_grid_columns_current_width_hint">当前设备宽度参考：竖屏约 %1$ddp，横屏约 %2$ddp</string>
+    <string name="search_grid_columns_current_bucket_hint">当前命中档位：竖屏 %1$s = %2$d 列，横屏 %3$s = %4$d 列</string>
+    <string name="search_grid_columns_current_portrait">当前竖屏</string>
+    <string name="search_grid_columns_current_landscape">当前横屏</string>
     <string name="current_slide_sensitivity">当前灵敏度：%s</string>
     <string name="network">网络</string>
     <string name="proxy">代理</string>
@@ -226,6 +233,23 @@
     <string name="watch_history_watched_at">观看于 %1$s</string>
     <string name="watch_history_released_at">发布于 %1$s</string>
     <string name="watch_history_progress_minutes">已观看约 %1$d 分钟</string>
+    <string name="online">在线</string>
+    <string name="popular">热门</string>
+    <string name="watch_history_online_help">下拉刷新，滑到底部自动加载更多。</string>
+    <string name="creator_center">创作中心</string>
+    <string name="uploaded_videos">已上传</string>
+    <string name="uploading_videos">审核中</string>
+    <string name="creator_center_help">下拉刷新，滑到底部自动加载更多。审核中的影片会显示当前审核状态。APP端不会做影片上传功能，请在网页端上传。上传前请检查是否已经被上传过，并正确填写影片元数据。</string>
+    <string name="creator_uploaded_empty_title">暂无已上传影片</string>
+    <string name="creator_uploaded_empty_description">通过审核并成功上传的影片会显示在这里。</string>
+    <string name="creator_uploaded_load_failed">加载已上传影片失败，点击重试</string>
+    <string name="creator_uploading_empty_title">暂无审核中影片</string>
+    <string name="creator_uploading_empty_description">排队中、待处理或转码中的影片会显示在这里。</string>
+    <string name="creator_uploading_load_failed">加载审核中影片失败，点击重试</string>
+    <string name="creator_status_uploaded">已上传</string>
+    <string name="creator_status_queued">排队中</string>
+    <string name="creator_status_pending">待处理</string>
+    <string name="creator_status_transcoding">转码中</string>
     <string name="speed">倍速</string>
     <string name="cancel_thumb_up_success">取消点赞成功！</string>
     <string name="thumb_up_success">点赞成功！</string>
@@ -286,6 +310,7 @@
     <string name="do_not_use_japan_ip">不要使用日本IP地址!!!</string>
     <string name="website_blocked_msg">看到这里说明他们网站被加固了，能不能恢复只能听天命了…</string>
     <string name="not_logged_in_currently">当前未登录</string>
+    <string name="login_state_expired">登录状态已失效，已自动登出，请重新登录</string>
     <string name="parse_error_msg">可能这个网址解析起来不太一样…</string>
     <string name="network_unstable_msg">可能是你的网络不稳定，多刷新！</string>
     <string name="unknown_download_error">未知下载错误</string>
@@ -352,6 +377,25 @@
     <string name="disable_comments_title">关闭评论区</string>
     <string name="default_video_quilty">默认分辨率</string>
     <string name="my_subscribe">我的订阅</string>
+    <string name="subscribed_artists_count">已关注作者（%1$d）</string>
+    <string name="swipe_more">向右滑动</string>
+    <string name="my_account">我的</string>
+    <string name="username">用户名</string>
+    <string name="logout">登出</string>
+    <string name="change_avatar">更改头像</string>
+    <string name="account_stats_summary">%1$d 位订阅者 • %2$d 部影片</string>
+    <string name="edit_profile">编辑个人资料</string>
+    <string name="update_profile">更新个人资料</string>
+    <string name="change_password">更改密码</string>
+    <string name="old_password">旧密码</string>
+    <string name="new_password">新密码</string>
+    <string name="confirm_new_password">确认新密码</string>
+    <string name="password_not_match">两次输入的新密码不一致</string>
+    <string name="forgot_password">忘记密码？</string>
+    <string name="crop_avatar">裁剪头像</string>
+    <string name="updating">更新中…</string>
+    <string name="changing">更改中…</string>
+    <string name="uploading">上传中…</string>
     <string name="title_activity_qrcode_scanner">手动录入cookies</string>
     <string name="scan_for_cookies">手动录入cookies</string>
     <string name="import_cookies_intro">此种导入方式也可以缓解因cloudflare引起的登录拦截\n1.在网页版登录之后，想办法获取Cookies，只要你能获取到，手机和电脑都行。\n2.格式大概如图所示，注意！头尾不应包含双引号，并且不应是格式化后的Cookies序列。\n使用“手动导入”按钮的导入。\n如果导入完成之后刷新页面还是显示未登陆的状态，那就检查你的Cookies。</string>
@@ -602,6 +646,11 @@
     <string name="search_artist_ignore_video_type_summary">开启后，点击详情页头像搜索艺术家时，不再附带影片类型。</string>
     <string name="show_played_indicator">显示播放状态标记</string>
     <string name="show_played_indicator_summary">开启后将在搜索结果页视频封面右上角显示已播放标记</string>
+    <string name="horizontal_card_count_title">横向列表可见卡片数</string>
+    <string name="horizontal_card_count_summary">可调整首页与影片详情相关推荐等横向列表一次可见的卡片数量</string>
+    <string name="horizontal_card_count_dialog_hint">按不同屏幕宽度设置横向列表一次可见的卡片数量</string>
+    <string name="horizontal_card_count_current_width_hint">当前容器宽度参考：约 %1$ddp</string>
+    <string name="horizontal_card_count_current_bucket_hint">当前命中档位：%1$s = %2$.1f 张</string>
     <string name="video_group_error">获取视频分组错误：</string>
     <string name="video_group_empty">视频分组为空</string>
     <string name="default_group_rename_not_allowed">默认分组（%s）不允许重命名！</string>
@@ -708,4 +757,7 @@
     <string name="theme_color_teal">初音蓝(绿)</string>
     <string name="theme_color_yellow">咸蛋黄</string>
     <string name="theme_color_high_contrast">高对比</string>
+    <string name="played">已观看</string>
+    <string name="local">本地</string>
+    <string name="current_bucket">当前命中档位</string>
 </resources>

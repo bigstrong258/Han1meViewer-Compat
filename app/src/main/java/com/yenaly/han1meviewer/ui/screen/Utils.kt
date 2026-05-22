@@ -13,10 +13,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.yenaly.han1meviewer.Preferences
+import com.yenaly.han1meviewer.ui.theme.SpacingLarge
+import com.yenaly.han1meviewer.ui.theme.SpacingNormal
+import com.yenaly.han1meviewer.ui.theme.VideoNormalCardMinWidth
 
 @Composable
 fun RetryableImage(
@@ -62,4 +67,34 @@ fun getColumnCount(itemWidth: Int): Int {
     val screenWidthPx = windowInfo.containerSize.width
     val screenWidthDp = with(density) { screenWidthPx.toDp() }
     return maxOf(2, (screenWidthDp / itemWidth.dp).toInt())
+}
+
+@Composable
+fun rememberCardResponsiveWidth(
+    horizontalPadding: Dp = SpacingLarge,
+    itemSpacing: Dp = SpacingNormal
+): Pair<Dp, Float> {
+    val containerWidth = LocalWindowInfo.current.containerSize.width
+    val density = LocalDensity.current
+    val currentWidthDp = with(density) { containerWidth.toDp() }
+    val itemsToShow = Preferences.horizontalCardCountConfig
+        .countForWidthDp(currentWidthDp.value.toInt())
+
+    val cardWidth = (currentWidthDp - (horizontalPadding * 2) - (itemSpacing * itemsToShow.toInt())) / itemsToShow
+
+    return Pair(cardWidth, itemsToShow)
+}
+
+@Composable
+fun rememberVideoGridColumns(): Int {
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenWidthPx = windowInfo.containerSize.width
+    val screenWidthDp = with(density) { screenWidthPx.toDp() }
+
+    return if (Preferences.tabletMode) {
+        Preferences.searchGridColumnsConfig.columnsForWidthDp(screenWidthDp.value.toInt())
+    } else {
+        maxOf(2, ((screenWidthDp + SpacingNormal) / (VideoNormalCardMinWidth + SpacingNormal)).toInt())
+    }
 }

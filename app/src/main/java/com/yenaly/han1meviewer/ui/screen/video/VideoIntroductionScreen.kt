@@ -55,7 +55,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -81,6 +80,10 @@ import com.yenaly.han1meviewer.ui.component.lazy.LazyColumn
 import com.yenaly.han1meviewer.ui.component.lazy.LazyRow
 import com.yenaly.han1meviewer.ui.preview.ComponentPreview
 import com.yenaly.han1meviewer.ui.preview.fakeVideoIntroduction
+import com.yenaly.han1meviewer.ui.screen.rememberCardResponsiveWidth
+import com.yenaly.han1meviewer.ui.theme.SpacingNormal
+import com.yenaly.han1meviewer.ui.theme.VideoNormalCardMinWidth
+import com.yenaly.han1meviewer.ui.theme.VideoSimplifiedCardMinWidth
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
@@ -99,7 +102,7 @@ fun VideoIntroductionScreen(
     fromDownload: Boolean,
     hideRelatedInIntro: Boolean,
     shareText: String,
-    playlistInitialIndex: Int,
+    playlistInitialIndex: Int?,
     introFirstVisibleItemIndex: Int,
     introFirstVisibleItemScrollOffset: Int,
     downloadPrompt: DownloadPromptState?,
@@ -193,7 +196,7 @@ private fun VideoIntroductionContent(
     fromDownload: Boolean,
     hideRelatedInIntro: Boolean,
     shareText: String,
-    playlistInitialIndex: Int,
+    playlistInitialIndex: Int?,
     introFirstVisibleItemIndex: Int,
     introFirstVisibleItemScrollOffset: Int,
     downloadPrompt: DownloadPromptState?,
@@ -697,11 +700,20 @@ private fun PlaylistBottomSheet(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
+                            .background(
+                                if (item.isPlaying) {
+                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)
+                                } else {
+                                    MaterialTheme.colorScheme.surface
+                                }
+                            )
                             .combinedClickable(
+                                enabled = !item.isPlaying,
                                 onClick = { onOpenVideo(item) },
                                 onLongClick = null,
                             )
-                            .padding(4.dp),
+                            .padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
@@ -718,15 +730,32 @@ private fun PlaylistBottomSheet(
                             Text(
                                 text = item.title,
                                 style = MaterialTheme.typography.titleSmall,
+                                color = if (item.isPlaying) {
+                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                },
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                             )
                             Text(
                                 text = item.currentArtist.orEmpty(),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = if (item.isPlaying) {
+                                    MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.75f)
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                        if (item.isPlaying) {
+                            Text(
+                                text = stringResource(R.string.now_playing),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
@@ -982,13 +1011,25 @@ private fun TagsSection(
 @Composable
 private fun PlaylistSection(
     playlist: HanimeVideo.Playlist,
-    initialIndex: Int,
+    initialIndex: Int?,
     onOpenVideo: (HanimeInfo) -> Unit,
     onShowAllPlaylist: (() -> Unit)?,
     onPlaylistScrollChange: (Int) -> Unit,
 ) {
-    val listState = remember(playlist.video, initialIndex) {
-        LazyListState(firstVisibleItemIndex = initialIndex)
+    val (_, itemsToShow) = rememberCardResponsiveWidth()
+    val playingIndex = playlist.video.indexOfFirst { it.isPlaying }
+    val visibleItemCount = itemsToShow.toInt().coerceAtLeast(1)
+    val centeredInitialIndex = if (playingIndex >= 0) {
+        val centerOffset = (itemsToShow / 2f).toInt()
+        val maxStartIndex = (playlist.video.size - visibleItemCount).coerceAtLeast(0)
+        (playingIndex - centerOffset).coerceIn(0, maxStartIndex)
+    } else {
+        0
+    }
+    val resolvedInitialIndex = (initialIndex ?: centeredInitialIndex)
+        .coerceIn(0, playlist.video.lastIndex.coerceAtLeast(0))
+    val listState = remember(playlist.video, resolvedInitialIndex) {
+        LazyListState(firstVisibleItemIndex = resolvedInitialIndex)
     }
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
@@ -1002,14 +1043,18 @@ private fun PlaylistSection(
             actionText = if (onShowAllPlaylist != null) stringResource(R.string.more) else null,
             onActionClick = onShowAllPlaylist,
         )
+        val (cardWidth, _) = rememberCardResponsiveWidth()
         LazyRow(
             state = listState,
-            contentPadding = PaddingValues(horizontal = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             items(playlist.video, key = { it.videoCode }) { item ->
                 VideoCardItem(
+                    modifier = Modifier.width(cardWidth),
                     videoItem = item,
                     isHorizontalCard = item.itemType == HanimeInfo.NORMAL,
+                    isPlaying = item.isPlaying,
                     onClickVideosItem = { onOpenVideo(item) },
                     onLongClickVideosItem = { _, _ -> },
                 )
@@ -1024,22 +1069,25 @@ internal fun RelatedVideosSection(
     videos: List<HanimeInfo>,
     onOpenVideo: (HanimeInfo) -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(SpacingNormal),) {
         SectionHeader(title = stringResource(R.string.related_video))
+
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-            val cardWidth = if (videos.firstOrNull()?.itemType == HanimeInfo.NORMAL) {
-                dimensionResource(R.dimen.video_cover_width)
-            } else {
-                dimensionResource(R.dimen.video_cover_simplified_width)
-            }
-            val columns = maxOf(1, (maxWidth / cardWidth).toInt())
+            val isNormal = videos.firstOrNull()?.itemType == HanimeInfo.NORMAL
+            val minCardWidth = if (isNormal) VideoNormalCardMinWidth else VideoSimplifiedCardMinWidth
+            val spacing = SpacingNormal
+            val columns = maxOf(2, ((maxWidth + spacing) / (minCardWidth + spacing)).toInt())
+            val itemWidth = ((maxWidth - (spacing * (columns - 1))) / columns) - 0.5.dp
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 maxItemsInEachRow = columns,
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(spacing),
+                verticalArrangement = Arrangement.spacedBy(spacing)
             ) {
                 videos.forEach { item ->
                     VideoCardItem(
+                        modifier = Modifier.width(itemWidth),
                         videoItem = item,
                         isHorizontalCard = item.itemType == HanimeInfo.NORMAL,
                         onClickVideosItem = { onOpenVideo(item) },
