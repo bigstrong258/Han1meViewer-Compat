@@ -33,3 +33,10 @@
 -keep class androidx.window.extensions.embedding.** { *; }
 -keep class is.xyz.mpv.** { *; }
 -keep class lis.xyz.mpv.** { *; }
+
+# 保护 WebViewUpgrade 的反射/Hook 路径，避免 release 混淆后内核替换失效。
+-keep class com.norman.webviewup.lib.** { *; }
+-keep class com.yenaly.han1meviewer.util.WebViewUpgradeUtil { *; }
+-keep class android.webkit.** { *; }
+-keep class com.android.webview.** { *; }
+-keepattributes Signature, *Annotation*, EnclosingMethod, SourceFile, LineNumberTable
