@@ -74,6 +74,8 @@ fun HomeSettingsScreen(
     onOpenOpenSourceLicense: () -> Unit,
     onOpenAbout: () -> Unit,
     onClearCache: () -> Unit,
+    onExportBackup: () -> Unit,
+    onImportBackup: () -> Unit,
     onSubmitBug: () -> Unit,
     onOpenForum: () -> Unit,
 ) {
@@ -145,7 +147,9 @@ fun HomeSettingsScreen(
     ChoiceDialog(
         visible = activeDialog == HomeSettingsChoiceDialog.ThemeColor,
         title = stringResource(R.string.theme_color),
-        options = ThemeColorPreset.entries.map { stringResource(it.displayNameRes) to it.key },
+        options = ThemeColorPreset.entries
+            .filter { state.dynamicColorEnabled || it != ThemeColorPreset.SYSTEM }
+            .map { stringResource(it.displayNameRes) to it.key },
         selectedValue = state.themeColorKey,
         onDismiss = { activeDialog = null },
         onSelect = {
@@ -428,6 +432,22 @@ fun HomeSettingsScreen(
         item { SettingsGroupTitle(stringResource(R.string.other)) }
         item {
             SettingNavigationItem(
+                title = stringResource(R.string.backup_export_title),
+                summary = stringResource(R.string.backup_export_summary),
+                iconRes = R.drawable.baseline_backup_24,
+                onClick = onExportBackup,
+            )
+        }
+        item {
+            SettingNavigationItem(
+                title = stringResource(R.string.backup_import_title),
+                summary = stringResource(R.string.backup_import_summary),
+                iconRes = R.drawable.baseline_restore_24,
+                onClick = onImportBackup,
+            )
+        }
+        item {
+            SettingNavigationItem(
                 title = stringResource(R.string.clear_cache),
                 summary = state.cacheSummary,
                 iconRes = R.drawable.ic_baseline_clear_all_24,
@@ -550,6 +570,8 @@ private fun HomeSettingsScreenPreview() {
             onOpenOpenSourceLicense = {},
             onOpenAbout = {},
             onClearCache = {},
+            onExportBackup = {},
+            onImportBackup = {},
             onSubmitBug = {},
             onOpenForum = {},
         )

@@ -130,6 +130,7 @@ fun VideoRouteHostScreen(
         mutableStateOf<DownloadPromptState?>(null)
     }
     var videoTitle by remember(route.videoCode, route.localUri) { mutableStateOf<String?>(null) }
+    var isSideRelatedCollapsed by remember { mutableStateOf(false) }
     var showAddHKeyframeDialog by remember { mutableStateOf<Pair<Long, String>?>(null) }
 
     val actions = remember(activity, scope, viewModel, genres) {
@@ -372,7 +373,12 @@ fun VideoRouteHostScreen(
                     }
                 }
 
-                Lifecycle.Event.ON_STOP -> Jzvd.goOnPlayOnPause()
+                Lifecycle.Event.ON_STOP -> {
+                    if (!activity.isInPictureInPictureMode) {
+                        changeScreenNormal()
+                    }
+                    Jzvd.goOnPlayOnPause()
+                }
                 else -> Unit
             }
         }
@@ -439,6 +445,22 @@ fun VideoRouteHostScreen(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(orientationManager)
             lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
+        }
+    }
+
+    LaunchedEffect(
+        hostUiState.isInPipMode,
+        isSideRelatedCollapsed,
+    ) {
+        if (hostUiState.isInPipMode) return@LaunchedEffect
+        val height = if (Preferences.tabletMode) {
+            if (isSideRelatedCollapsed) 500.dp else 400.dp
+        } else {
+            250.dp
+        }
+        if (hostUiState.playerHeightDp != height) {
+            viewModel.setPlayerHeightDp(height)
+            setPlayerHeight(height)
         }
     }
 
@@ -539,6 +561,7 @@ fun VideoRouteHostScreen(
         isInPipMode = hostUiState.isInPipMode,
         relatedItems = relatedItems,
         onHideRelatedInIntroChange = { viewModel.hideRelatedInIntro = it },
+        onSideRelatedCollapsedChange = { isSideRelatedCollapsed = it },
         onOpenVideo = { item -> activity.showVideoDetailFragment(item.videoCode) },
         mainHostFactory = {
             shell.mainHostView.also { view ->
