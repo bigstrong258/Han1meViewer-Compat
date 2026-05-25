@@ -159,6 +159,16 @@
     <string name="use_built_in_hosts">Use Built-in Hosts</string>
     <string name="network_settings">Network Settings</string>
     <string name="use_built_in_hosts_summary">Mapping of hosts to IP provided by the app\nVPN? What\'s that?</string>
+    <string name="use_doh">Use DoH</string>
+    <string name="doh_settings">DoH Settings</string>
+    <string name="doh_preset">DoH Preset</string>
+    <string name="doh_custom_url">Custom DoH URL</string>
+    <string name="doh_bootstrap_ips">Bootstrap Resolver IPs</string>
+    <string name="doh_bootstrap_ips_summary">Enter DoH endpoint IPs separated by commas. Built-in presets provide them automatically; custom URLs use system resolution when empty.</string>
+    <string name="doh_timeout_seconds">Resolution Timeout (s)</string>
+    <string name="doh_timeout_seconds_summary">Connect/read timeout for DoH requests. 5–15 seconds is recommended.</string>
+    <string name="doh_enabled_summary">Enabled</string>
+    <string name="doh_disabled_summary">Disabled</string>
     <string name="password">Password</string>
     <string name="try_login_here">Try logging in here</string>
     <string name="email">Email</string>
@@ -465,6 +475,11 @@ Recommendations are as follows:\n
     <string name="calendar_dialog_message">Create a calendar reminder for %1$s?\nMake sure you show up on time! 🫡</string>
     <string name="calendar_dialog_confirm">Create Reminder</string>
     <string name="calendar_dialog_dismiss">No Thanks</string>
+    <string name="testing">Testing…</string>
+    <string name="test_doh">Test DoH</string>
+    <string name="test_doh_summary">Check whether current DoH settings can resolve the domain</string>
+    <string name="doh_test_result">DoH Test Result</string>
+    <string name="doh_conflict_message">DoH and built-in DNS mapping cannot be enabled at the same time. Enabling one will automatically disable the other.</string>
     <string name="view_checkin">View</string>
     <string name="dialog_existing_records">Existing Records</string>
     <string name="dialog_max_reached">Daily limit reached (20)</string>
@@ -490,8 +505,8 @@ Recommendations are as follows:\n
     <string name="ach_morning">Early Bird</string>
     <string name="ach_scholar">Scholar</string>
     <string name="no_calendar_app">No calendar app found</string>
-    <string name="egg_six">6 times! Are you a demon? 👹</string>
-    <string name="egg_nine">9 times! You\'ve reached enlightenment! 🧘</string>
+    <string name="egg_three">3 times! Are you a demon? 👹</string>
+    <string name="egg_four">4 times! You\'ve reached enlightenment! 🧘</string>
     <string name="egg_round">%1$d times! You are a legend! 👑</string>
     <string name="nice_title">NICE</string>
     <string name="streak_title">Streak Achieved</string>
@@ -755,4 +770,10 @@ Recommendations are as follows:\n
     <string name="played">Watched</string>
     <string name="local">Local</string>
     <string name="current_bucket">Current bucket</string>
+    <string name="sex_times">Cranking the hog so hard the engine literally blew up.</string>
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
+    <string name="move_group">Move Group</string>
+    <string name="confirm_delete_videos">Are you sure you want to delete %d videos?</string>
+    <string name="confirm_move_videos">Are you sure you want to move %d videos to group %s?</string>
 </resources>

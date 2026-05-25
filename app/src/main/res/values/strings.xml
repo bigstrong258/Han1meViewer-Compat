@@ -168,6 +168,16 @@
     <string name="use_built_in_hosts">應用內建 Hosts</string>
     <string name="network_settings">網路設定</string>
     <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\nVPN？那是什麼？</string>
+    <string name="use_doh">使用 DoH</string>
+    <string name="doh_settings">DoH 設定</string>
+    <string name="doh_preset">DoH 預設</string>
+    <string name="doh_custom_url">自訂 DoH URL</string>
+    <string name="doh_bootstrap_ips">啟動解析 IP</string>
+    <string name="doh_bootstrap_ips_summary">可輸入 DoH 服務本身的多個 IP，以逗號分隔。內建預設會自動提供，自訂 URL 留空時使用系統解析</string>
+    <string name="doh_timeout_seconds">解析超時（秒）</string>
+    <string name="doh_timeout_seconds_summary">DoH 請求的連線與讀取超時，建議 5–15 秒</string>
+    <string name="doh_enabled_summary">已啟用</string>
+    <string name="doh_disabled_summary">已關閉</string>
     <string name="password">密碼</string>
     <string name="try_login_here">試試在這裡登入</string>
     <string name="email">電子郵件</string>
@@ -444,6 +454,11 @@
     <string name="select_fake_icon">選擇顯示在桌面的圖標</string>
     <string name="fake_icon_hint">設定成功，應用可能會關閉，應用圖標可能會稍晚些刷新，期間會提示應用未安裝。</string>
     <string name="current_node_latency">當前CDN節點延遲</string>
+    <string name="testing">測試中…</string>
+    <string name="test_doh">測試 DoH</string>
+    <string name="test_doh_summary">檢查目前 DoH 設定是否可解析網域</string>
+    <string name="doh_test_result">DoH 測試結果</string>
+    <string name="doh_conflict_message">DoH 與內建 DNS 映射不可同時啟用。開啟其中一個時，會自動關閉另一個。</string>
     <string name="unknow">未知</string>
     <string name="builtin_dns">內建DNS映射</string>
     <string name="node_latency_sum">啟用內建Hosts後可偵測延遲狀況\n不啟用為實際解析位址</string>
@@ -499,8 +514,8 @@
     <string name="calendar_dialog_confirm">建立提醒</string>
     <string name="calendar_dialog_dismiss">不用了</string>
     <string name="no_calendar_app">找不到日曆應用</string>
-    <string name="egg_six">6 次了！你是魔鬼嗎？👹</string>
-    <string name="egg_nine">9 次！九九歸一，功力大成！🧘</string>
+    <string name="egg_three">3 次了！你是魔鬼嗎？👹</string>
+    <string name="egg_four">4 次！功力大成！🧘</string>
     <string name="egg_round">%1$d 次達成！你是傳奇！👑</string>
     <string name="nice_title">NICE</string>
     <string name="streak_title">連續達成</string>
@@ -809,4 +824,10 @@
     <string name="played">已觀看</string>
     <string name="local">本地</string>
     <string name="current_bucket">目前命中檔位</string>
+    <string name="sex_times">這不是自慰，這是肉體與靈魂的極限大爆炸。</string>
+    <string name="select_all">全選</string>
+    <string name="deselect_all">取消全選</string>
+    <string name="move_group">移動分組</string>
+    <string name="confirm_delete_videos">確定要刪除 %d 個影片嗎？</string>
+    <string name="confirm_move_videos">確定要移動 %d 個影片到群組 %s 嗎？</string>
 </resources>

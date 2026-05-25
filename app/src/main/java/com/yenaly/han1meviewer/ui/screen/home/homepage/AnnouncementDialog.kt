@@ -1,4 +1,4 @@
-package com.yenaly.han1meviewer.ui.component
+package com.yenaly.han1meviewer.ui.screen.home.homepage
 
 import android.content.ContentValues
 import android.content.Context
@@ -54,6 +54,7 @@ import coil3.request.crossfade
 import coil3.toBitmap
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.model.Announcement
+import com.yenaly.han1meviewer.ui.component.ConfirmDialog
 import com.yenaly.han1meviewer.ui.preview.ComponentPreview
 import com.yenaly.han1meviewer.ui.preview.fakeAnnouncements
 import kotlinx.coroutines.Dispatchers
@@ -241,7 +242,7 @@ private suspend fun saveImageToGallery(context: Context, imageUrl: String) {
     }
 }
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun AnnouncementDialogPreview(){
     ComponentPreview {
