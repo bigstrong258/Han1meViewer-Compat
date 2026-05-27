@@ -1,3 +1,53 @@
+# Han1meViewer for Huawei (HarmonyOS)
+
+本仓库是基于 [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer) 的 Huawei / HarmonyOS 特供版本，主要用于解决部分华为、荣耀设备在系统 WebView 版本较低时无法通过 Cloudflare 验证的问题。
+
+当前正式版本：`v0.26.0-harmonyos-r1`
+
+## Huawei 特供版说明
+
+- 集成 [WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)，在 Huawei / HarmonyOS 设备上尝试挂载内置高版本 WebView 内核。
+- 内置精简后的 WebView 内核资产：`app/src/main/assets/com.google.android.webview.mp3`。
+- 更新源、公告源、反馈入口已指向本 fork。
+- 已移除上游签名一致性检查，支持本 fork 独立构建与发布。
+- release 构建已加入 WebViewUpgrade 相关 ProGuard / R8 keep 规则，避免混淆导致内核替换失效。
+
+## 首次启动与 Cloudflare 验证
+
+由于 Android 系统在单个进程生命周期内只会初始化一次 WebView，首次准备内置 WebView 后，通常需要手动清理后台并重新打开应用：
+
+1. 首次进入 Cloudflare 验证页时，应用会尝试准备内置 WebView。
+2. 如果看到“正在更新 WebView，完成后请手动清理后台并重新打开应用”之类提示，请等待数秒后从最近任务中清理应用后台。
+3. 重新打开应用后，再次进入验证页，此时内置高版本 WebView 通常会生效。
+4. 第二次进入后，若高版本内核已挂载成功，将不再提示重新打开应用。
+
+非 Huawei / Honor 设备建议优先通过系统或应用商店更新 WebView。Samsung 设备目前不建议使用本项目的 WebViewUpgrade 方案。
+
+## 反馈渠道
+
+如果遇到崩溃、Cloudflare 无法通过、WebView 内核未成功替换、评论区异常、播放或下载问题，请通过以下方式反馈：
+
+- GitHub Issues: [https://github.com/bigstrong258/Han1meViewer-for-Huawei/issues](https://github.com/bigstrong258/Han1meViewer-for-Huawei/issues)
+- GitHub Discussions: [https://github.com/bigstrong258/Han1meViewer-for-Huawei/discussions](https://github.com/bigstrong258/Han1meViewer-for-Huawei/discussions)
+- Email: `pikapikasunny77@gmail.com`
+
+反馈时请尽量附带：
+
+- 手机型号，例如 `HUAWEI LRA-AL00`
+- Android / HarmonyOS 版本
+- Han1meViewer 版本号
+- 是否覆盖安装
+- 异常发生前正在进行的操作
+- 如果方便，请附截图、录屏或 logcat
+
+## 与上游的关系
+
+本项目会尽量跟随上游更新，但 Huawei / HarmonyOS 相关 WebViewUpgrade 逻辑属于本 fork 的额外适配。若你的设备可以通过正常渠道更新系统 WebView，并且使用上游项目没有 Cloudflare 问题，建议优先使用上游原项目。
+
+---
+
+以下为上游项目 README 内容。
+
 # 🚫 请不要在任何公开平台宣传本软件
 
 本软件不接受任何形式的公开宣传。若出现公开宣传、搬运或引流，仓库维护者可能随时归档或隐藏仓库，并删除已编译的发行版。
