@@ -47,7 +47,6 @@ data class VideoComments(
                 append('|')
                 append(content.hashCode())
             }
-        val realReplyId get() = checkNotNull(replyTargetIdOrNull)
         val realLikesCount get() = thumbUp
         fun incLikesCount(cancel: Boolean = false): VideoComment {
             return thumbUp?.let {

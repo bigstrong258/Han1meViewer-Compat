@@ -40,6 +40,7 @@ import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.USER_AGENT
 import com.yenaly.han1meviewer.logic.network.HProxySelector
 import com.yenaly.han1meviewer.util.AnimeShaders
+import com.yenaly.han1meviewer.util.AnimeShaders.getCert
 import com.yenaly.yenaly_libs.utils.showShortToast
 import `is`.xyz.mpv.MPVLib
 import java.util.concurrent.CountDownLatch
@@ -501,9 +502,14 @@ class MpvMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd) {
 
     val videoRealHeight: Int
         get() = MPVLib.getPropertyInt("video-params/h") ?: 0
+
+    private var mpvTimePos: Double = 0.0
+    private var mpvCacheDuration: Double = 0.0
+    private var mpvDuration: Double = 0.0
     private var currentPfd: ParcelFileDescriptor? = null
     private var detachFd: Int? = null
     private var pfdFilePath = false
+    private val certFile = getCert(jzvd.context)
     val defaultSpeed = Preferences.playerSpeed
     private val mpvOptions: Map<String, String>
         get() = buildMap {
@@ -558,6 +564,9 @@ class MpvMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd) {
             put("cache-pause", "no")  // 缓存时是否暂停播放
 
             put("network-timeout", Preferences.mpvNetworkTimeout.toString())  // 请求超时
+
+            put("tls-ca-file", certFile)  // 为播放器指定根证书文件，解决 tls-verify 如果为yes播放失败的问题
+
             put("tls-verify", if (Preferences.mpvTlsVerify) "no" else "yes")  // 是否证书验证 yes、no
 
             // 单独为MPV播放器配置代理，因为它不走ProxySelector，也不支持socks代理，沟槽的非原生实现
@@ -580,6 +589,7 @@ class MpvMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd) {
         "playback-active" to MPVLib.mpvFormat.MPV_FORMAT_FLAG, // 播放是否处于活动状态
         "video-params/w" to MPVLib.mpvFormat.MPV_FORMAT_INT64, // 视频宽度（像素）
         "video-params/h" to MPVLib.mpvFormat.MPV_FORMAT_INT64, // 视频高度（像素）
+        "demuxer-cache-duration" to MPVLib.mpvFormat.MPV_FORMAT_DOUBLE
     )
     fun parseCustomMpvParams(): LinkedHashMap<String, String> {
         val rawInput = Preferences.customMpvParams
@@ -807,6 +817,20 @@ class MpvMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd) {
 
         override fun eventProperty(property: String, value: Double) {
 //            Log.d(TAG, "eventProperty: $property $value")
+            when (property) {
+                "time-pos" -> mpvTimePos = value
+                "demuxer-cache-duration" -> mpvCacheDuration = value
+                "duration" -> mpvDuration = value
+            }
+            if (mpvDuration > 0) {
+                val bufferedTime = mpvTimePos + mpvCacheDuration
+                val safeBufferedTime = bufferedTime.coerceAtMost(mpvDuration)
+                val bufferPercent = ((safeBufferedTime / mpvDuration) * 100).toInt()
+                handler.post {
+                    jzvd.setBufferProgress(bufferPercent)
+                }
+            }
+
         }
 
         override fun event(eventId: Int) {
@@ -814,6 +838,9 @@ class MpvMediaKernel(jzvd: Jzvd) : JZMediaInterface(jzvd) {
                 when (eventId) {
                     MPVLib.mpvEventId.MPV_EVENT_START_FILE -> {
                         // 文件开始加载
+                        mpvTimePos = 0.0
+                        mpvCacheDuration = 0.0
+                        mpvDuration = 0.0
                         jzvd.onStatePreparing()
                     }
                     MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED -> {

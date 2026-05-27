@@ -4,12 +4,11 @@ import Config.Version.createVersion
 import Config.Version.source
 import Config.isRelease
 import Config.lastCommitSha
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import com.android.build.api.variant.impl.VariantOutputImpl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.com.android.application)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.parcelize)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
     alias(libs.plugins.com.google.devtools.ksp)
@@ -18,8 +17,8 @@ plugins {
     alias(libs.plugins.com.google.firebase.firebase.pref)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.navigation.safeargs)
-    id("com.mikepenz.aboutlibraries.plugin") version "13.2.1"
-    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.mikepenz.aboutlibraries.plugin") version "14.2.0"
+    id("com.github.ben-manes.versions") version "0.54.0"
 }
 
 android {
@@ -38,17 +37,9 @@ android {
         applicationId = "com.yenaly.han1meviewer"
         minSdk = property("min.sdk")?.toString()?.toIntOrNull()
         targetSdk = property("target.sdk")?.toString()?.toIntOrNull()
-        val (code, name) = createVersion(major = 0, minor = 25, patch = 0)
+        val (code, name) = createVersion(major = 0, minor = 26, patch = 0)
         versionCode = code
         versionName = name
-
-        // --- 在这里添加 ---
-        ndk {
-            // 只打包 arm64-v8a 架构。
-            // 这会过滤掉 x86、x86_64 和 armeabi-v7a，包体积会显著减小
-            abiFilters.add("arm64-v8a")
-        }
-        // -----------------
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -62,7 +53,10 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile = file(System.getenv("HOME") + "/.android/keystore.jks")
+            storeFile = file(
+                System.getenv("KEYSTORE_FILE")
+                    ?: "D:/Developer/Keys/hanime_viewer.jks"
+            )
             storePassword = System.getenv("KEYSTORE_PASSWORD")
             keyAlias = System.getenv("KEY_ALIAS")
             keyPassword = System.getenv("KEYSTORE_PASSWORD")
@@ -71,7 +65,7 @@ android {
 
     splits {
         abi {
-            isEnable = false
+            isEnable = (gradle.startParameter.taskRequests.toString().contains("Release"))
             reset()
             include("arm64-v8a")
             isUniversalApk = false
@@ -81,20 +75,14 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
-            manifestPlaceholders.put("appIcon", "@mipmap/ic_launcher_new")
+            manifestPlaceholders["appIcon"] = "@mipmap/ic_launcher_new"
 
-            applicationVariants.all variant@{
-                this@variant.outputs.all output@{
-                    val output = this@output as BaseVariantOutputImpl
-                    val versionName = defaultConfig.versionName
-                    output.outputFileName = "Han1meViewer-v${versionName}.apk"
-                }
-            }
         }
 
         debug {
@@ -102,7 +90,8 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
-            manifestPlaceholders.put("appIcon", "@mipmap/ic_launcher_debug")
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["appIcon"] = "@mipmap/ic_launcher_debug"
         }
     }
     buildFeatures {
@@ -117,19 +106,32 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.value(JvmTarget.JVM_21)
-            freeCompilerArgs.addAll(
-                "-opt-in=kotlin.RequiresOptIn",
-                "-Xjvm-default=all-compatibility"
-            )
-        }
-    }
     lint {
         disable += setOf("EnsureInitializerMetadata")
     }
     namespace = "com.yenaly.han1meviewer"
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.value(JvmTarget.JVM_21)
+        freeCompilerArgs.addAll(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-jvm-default=enable"
+        )
+    }
+}
+
+
+androidComponents {
+    onVariants { variant ->
+        variant.outputs.forEach { output ->
+
+            //  val apkName = "你的应用名_V${output.versionName.get()}_Build${output.versionCode.get()}_${variant.buildType}.apk"
+            val apkName = "Han1meViewer-v${output.versionName.get()}.apk"
+            (output as VariantOutputImpl).outputFileName = apkName
+        }
+    }
 }
 
 dependencies {
@@ -138,10 +140,10 @@ dependencies {
     implementation(libs.androidx.window.java)
     implementation(project(":yenaly_libs"))
     implementation(libs.aboutlibraries.core)
-    implementation(libs.aboutlibraries)
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.material.icons.extended)
     // android related
 
     implementation(libs.bundles.android.base)
@@ -162,7 +164,8 @@ dependencies {
     implementation(libs.androidx.material.icons.core)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-
+    implementation(libs.aboutlibraries.compose.m3)
+    implementation(libs.compose.avatar.cropper)
     // datetime
 
     implementation(libs.datetime)
@@ -176,19 +179,13 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.converter.serialization)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.dns.over.https)
 
     // pic
 
     implementation(libs.coil)
 
-    // popup
-
-    implementation(libs.xpopup){
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
-    }
-    implementation(libs.xpopup.ext){
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
-    }
 
     // video
 
@@ -199,15 +196,11 @@ dependencies {
 
     // view
 
-    implementation(libs.refresh.layout.kernel)
-    implementation(libs.refresh.header.material)
-    implementation(libs.refresh.footer.classics)
     implementation(libs.multitype)
     implementation(libs.base.recyclerview.adapter.helper4)
     implementation(libs.expandable.textview)
     implementation(libs.spannable.x)
     implementation(libs.about)
-    implementation(libs.statelayout)
     implementation(libs.circular.reveal.switch)
     implementation(libs.drawerlayout)
 
@@ -230,8 +223,9 @@ dependencies {
     androidTestImplementation(libs.test.espresso.core)
 
     // debugImplementation(libs.leak.canary)
+
+    // WebviewUpgrade
     implementation("io.github.jonanorman.android.webviewup:core:0.1.0")
-    // 下载源模块 - 远程 APK 下载必需
     implementation("io.github.jonanorman.android.webviewup:download-source:0.1.0")
 }
 

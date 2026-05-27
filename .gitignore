@@ -41,6 +41,7 @@ Thumbs.db
 *.log
 *.tmp
 *.swp
+sync_upstream.bat
 
 # 开发环境文件
 .env
@@ -69,6 +70,3 @@ Thumbs.db
 
 # 忽略 debug 测试构建
 /app/build/outputs/apk/debug/
-
-# 忽略本地同步上游仓库脚本
-sync_upstream.bat

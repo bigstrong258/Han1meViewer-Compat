@@ -34,15 +34,9 @@
 -keep class is.xyz.mpv.** { *; }
 -keep class lis.xyz.mpv.** { *; }
 
-# 1. 保护 Norman 的库全家桶，防止类名和方法名被混淆导致反射失败
+# 保护 WebViewUpgrade 的反射/Hook 路径，避免 release 混淆后内核替换失效。
 -keep class com.norman.webviewup.lib.** { *; }
-
-# 2. 保护你自己的工具类
 -keep class com.yenaly.han1meviewer.util.WebViewUpgradeUtil { *; }
-
-# 3. 保护 Android 系统 WebView 相关内部类（必须保留，库需要 Hook 这些类）
 -keep class android.webkit.** { *; }
 -keep class com.android.webview.** { *; }
-
-# 4. 保留反射需要的元数据
 -keepattributes Signature, *Annotation*, EnclosingMethod, SourceFile, LineNumberTable
