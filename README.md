@@ -27,8 +27,8 @@
 
 如果遇到崩溃、Cloudflare 无法通过、WebView 内核未成功替换、评论区异常、播放或下载问题，请通过以下方式反馈：
 
-- GitHub Issues: [https://github.com/bigstrong258/Han1meViewer-for-Huawei/issues](https://github.com/bigstrong258/Han1meViewer-for-Huawei/issues)
-- GitHub Discussions: [https://github.com/bigstrong258/Han1meViewer-for-Huawei/discussions](https://github.com/bigstrong258/Han1meViewer-for-Huawei/discussions)
+- GitHub Issues: [https://github.com/bigstrong258/Han1meViewer-Compat/issues](https://github.com/bigstrong258/Han1meViewer-Compat/issues)
+- GitHub Discussions: [https://github.com/bigstrong258/Han1meViewer-Compat/discussions](https://github.com/bigstrong258/Han1meViewer-Compat/discussions)
 - Email: `pikapikasunny77@gmail.com`
 
 反馈时请尽量附带：
@@ -133,7 +133,7 @@ Telegram 群组：[https://t.me/Han1meViewer](https://t.me/Han1meViewer)
 公告系统分为两部分：
 
 - 用户侧：应用启动后由 `MainViewModel.loadAnnouncements()` 从 Firebase Realtime Database 读取 `announcements` 节点，首页会展示有效公告，并可点开公告详情弹窗。
-- 维护侧：`HanimeAnnouncementManagerWebUI` 用于维护公告数据，负责向同一个 `announcements` 节点写入、更新或下线公告。
+- 维护侧：默认由项目维护者在 Firebase 控制台维护 `announcements` 节点；仓库内的 `HanimeAnnouncementManagerWebUI` 作为可选管理方式保留。
 
 `HanimeAnnouncementManagerWebUI` 目录包含两个文件：
 
@@ -146,9 +146,22 @@ Telegram 群组：[https://t.me/Han1meViewer](https://t.me/Han1meViewer)
 - 项目中配置的 Firebase Realtime Database 地址必须可用。
 - `announcements` 节点下的公告数据结构需要和 `Announcement` 模型一致，至少包含 `title`、`content`、`isActive` 等字段。
 - 公告内容会按 `priority` 排序，只有 `isActive = true` 的公告才会显示。
-- 管理端需要启用 Firebase Authentication 和 Realtime Database。
-- 管理端需要准备 Firebase Web 配置参数和可登录的管理员邮箱、密码。
+- Realtime Database 建议仅允许客户端公开读取 `announcements`，禁止所有客户端写入；维护者通过 Firebase 控制台直接修改数据。
+- 仅当使用可选 WebUI 管理公告时，才需要启用 Firebase Authentication、准备管理员账号和 Web 配置。
 - 若使用 `PermitAdmin.py`，还需要 Firebase Admin SDK 的 `serviceAccountKey.json`。
+
+推荐的 Realtime Database 规则：
+
+```json
+{
+  "rules": {
+    "announcements": {
+      ".read": true,
+      ".write": false
+    }
+  }
+}
+```
 
 使用规则：
 
@@ -157,11 +170,16 @@ Telegram 群组：[https://t.me/Han1meViewer](https://t.me/Han1meViewer)
 - 公告详情支持标题、内容、发布时间、图片和按钮文案。
 - 若公告配置了链接，内容中可直接展示可点击的 URL。
 
-管理端使用步骤：
+通过 Firebase 控制台维护公告：
+
+1. 打开 Realtime Database 的 `announcements` 节点。
+2. 按下方字段结构新增、编辑、启用、停用或删除公告。
+
+如需使用可选 WebUI：
 
 1. 在 `HanimeAnnouncementManager.html` 中填写 `firebaseConfig`。
 2. 在 `ADMIN_EMAIL` 和 `ADMIN_PASSWORD` 中填入可登录 Firebase Auth 的管理员账号。
-3. 确保 Realtime Database 规则允许该管理员账号读写 `announcements` 节点。
+3. 将数据库规则改为允许带有 `isAdmin` 声明的账号写入 `announcements` 节点。
 4. 如需批量授权管理员，先安装 `firebase-admin`，准备 `serviceAccountKey.json`，再运行 `PermitAdmin.py` 并填写目标用户 UID。
 5. 打开管理页后即可新增、编辑、启用、停用或删除公告。
 
@@ -273,7 +291,7 @@ DownloadScreen -> DownloadViewModel -> HanimeDownloadManagerV2 -> WorkManager Wo
 1. 克隆项目：
 
    ```bash
-   git clone https://github.com/misaka10032w/Han1meViewer.git
+   git clone https://github.com/bigstrong258/Han1meViewer-Compat.git
    ```
 
 2. 使用 Android Studio 打开项目根目录。
