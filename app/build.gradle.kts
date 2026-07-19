@@ -72,6 +72,13 @@ android {
         }
     }
 
+    packaging {
+        jniLibs {
+            // Keep native libraries compressed in the APK and extracted at install time.
+            useLegacyPackaging = true
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
