@@ -27,8 +27,6 @@
 
     <application
         android:name=".HanimeApplication"
-        android:extractNativeLibs="true"
-        tools:replace="android:extractNativeLibs"
         android:allowBackup="true"
         android:hasFragileUserData="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
