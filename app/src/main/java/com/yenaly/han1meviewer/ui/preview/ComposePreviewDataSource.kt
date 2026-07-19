@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED")
 package com.yenaly.han1meviewer.ui.preview
 
 import com.yenaly.han1meviewer.R
@@ -7,6 +8,8 @@ import com.yenaly.han1meviewer.logic.entity.download.VideoWithCategories
 import com.yenaly.han1meviewer.logic.model.Announcement
 import com.yenaly.han1meviewer.logic.model.DownloadHeaderNode
 import com.yenaly.han1meviewer.logic.model.DownloadItemNode
+import com.yenaly.han1meviewer.logic.model.GetchuPreview
+import com.yenaly.han1meviewer.logic.model.GetchuPreviewDetail
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
 import com.yenaly.han1meviewer.logic.model.HanimePreview
 import com.yenaly.han1meviewer.logic.model.HanimeVideo
@@ -137,11 +140,25 @@ val fakePlaylists = listOf(
     ),
 )
 
-val fakeBanner = HomePage.Banner(
-    title = "【新作】小悪魔の補習計画 - 第1話",
-    description = "クラスで一番真面目な委員長が、放課後に秘密の補習を…",
-    picUrl = "https://vdownload.hembed.com/image/thumbnail/101573l.jpg",
-    videoCode = "101573",
+val fakeBanner = listOf(
+    HomePage.Banner(
+        title = "【新作】小悪魔の補習計画 - 第1話",
+        description = "クラスで一番真面目な委員長が、放課後に秘密の補習を…",
+        picUrl = "https://vdownload.hembed.com/image/thumbnail/101573l.jpg",
+        videoCode = "101573",
+    ),
+    HomePage.Banner(
+        title = "【新作】小悪魔の補習計画 - 第2話",
+        description = "クラスで一番真面目な委員長が、放課後に秘密の補習を…",
+        picUrl = "https://vdownload.hembed.com/image/thumbnail/101573l.jpg",
+        videoCode = "101573",
+    ),
+    HomePage.Banner(
+        title = "【新作】小悪魔の補習計画 - 第3話",
+        description = "クラスで一番真面目な委員長が、放課後に秘密の補習を…",
+        picUrl = "https://vdownload.hembed.com/image/thumbnail/101573l.jpg",
+        videoCode = "101573",
+    )
 )
 
 val fakeAnnouncements = listOf(
@@ -236,20 +253,44 @@ val fakeHomePageVideos = listOf(
 
 val fakeCategories = listOf(
     HomeCategory(
+        key = "preview_latest",
         titleRes = R.string.latest_hanime,
         genre = "裏番",
         videos = fakeHomePageVideos,
     ),
     HomeCategory(
+        key = "preview_release",
         titleRes = R.string.latest_release,
         sort = "最新上市",
         videos = fakeHomePageVideos.shuffled().take(4),
     ),
     HomeCategory(
+        key = "preview_watched",
         titleRes = R.string.they_watched,
         sort = "他們在看",
         videos = fakeHomePageVideos.shuffled().take(5),
     ),
+)
+
+val fakeHomePage = HomePage(
+    csrfToken = "preview-csrf-token",
+    avatarUrl = "https://picsum.photos/128/128?random=avatar",
+    username = "Preview User",
+    banner = fakeBanner.firstOrNull(),
+    latestHanime = fakeHomePageVideos.toMutableList(),
+    latestRelease = fakeHomePageVideos.shuffled().toMutableList(),
+    ecchiAnime = fakeHomePageVideos.shuffled().toMutableList(),
+    shortEpisodeAnime = fakeHomePageVideos.shuffled().toMutableList(),
+    twoPointFiveDAnime = fakeHomePageVideos.shuffled().toMutableList(),
+    threeDCG = fakeHomePageVideos.shuffled().toMutableList(),
+    motionAnime = fakeHomePageVideos.shuffled().toMutableList(),
+    twoDAnime = fakeHomePageVideos.shuffled().toMutableList(),
+    aiGenerated = fakeHomePageVideos.shuffled().toMutableList(),
+    mmd = fakeHomePageVideos.shuffled().toMutableList(),
+    cosplay = fakeHomePageVideos.shuffled().toMutableList(),
+    watchingNow = fakeHomePageVideos.shuffled().toMutableList(),
+    newAnimeTrailer = fakeHomePageVideos.shuffled().toMutableList(),
+    userId = "preview-user-id",
 )
 
 val fakeTagList1 = listOf("新番", "预告", "校园", "妹妹", "姐系", "正太", "萝莉")
@@ -413,4 +454,117 @@ val fakeVideoIntroduction = HanimeVideo(
     isFav = true,
     currentUserId = "10086",
     originalComic = "https://example.com/comic",
+    favTimes = 999
+)
+
+val fakeGetchuPreviewDetail = GetchuPreviewDetail(
+    id = "1364146",
+    title = "1LDK＋J系 いきなり同居？密着!?初エッチ!!? 第8話",
+    brand = "King Bee",
+    coverUrl = "https://www.getchu.com/brandnew/1364146/rc1364146package.jpg",
+    description = "「二三月そう」原作「1LDK＋JK いきなり同居？密着!?初エッチ！!?」（出版：KATTS）OVA化第8弾！\n" +
+            "休日の二人はいつもより大胆に",
+    releaseDate = "2026/07/10",
+    price = "￥4,200",
+    productUrl = "https://www.getchu.com/item/1364146/?gc=gc",
+    videoUrls = listOf("https://www.moongirls.us/getchu/2026/07/1364146.mp4"),
+    sections = listOf(
+        GetchuPreviewDetail.TextSection(
+            title = "123",
+            body = "456"
+        ),
+        GetchuPreviewDetail.TextSection(
+            title = "456",
+            body = "789"
+        )
+    ),
+    sampleImages = listOf(
+        "https://www.getchu.com/brandnew/1364146/c1364146sample1_s.jpg",
+        "https://www.getchu.com/brandnew/1364146/c1364146sample1_s.jpg"
+    ),
+    seriesItems = listOf(
+        GetchuPreview.Item(
+            id = "1364146",
+            title = "1LDK＋J系 いきなり同居？密着!?初エッチ!!? 第8話",
+            brand = "King Bee",
+            coverUrl = "https://www.getchu.com/brandnew/1364146/rc1364146package.jpg",
+            detailUrl = "https://www.getchu.com/item/1364146/?gc=gc",
+            price = "￥4,200"
+        )
+    ),
+    relatedItems = listOf(
+        GetchuPreview.Item(
+            id = "1364146",
+            title = "1LDK＋J系 いきなり同居？密着!?初エッチ!!? 第9話",
+            brand = "King Bee",
+            coverUrl = "https://www.getchu.com/brandnew/1364146/rc1364146package.jpg",
+            detailUrl = "https://www.getchu.com/item/1364146/?gc=gc",
+            price = "￥4,200"
+        )
+    )
+)
+val fakeGetchuPreviewItem = GetchuPreview.Item(
+    id = "1364146",
+    title = "1LDK＋J系 いきなり同居？密着!?初エッチ!!? 第8話",
+    brand = "King Bee",
+    coverUrl = "https://www.getchu.com/brandnew/1364146/rc1364146package.jpg",
+    detailUrl = "https://www.getchu.com/item/1364146/?gc=gc",
+    price = "￥4,200"
+)
+
+// 用于Compose预览的静态假数据
+val fakeGetchuPreview = GetchuPreview(
+    dateCode = "2024-01",
+    groups = listOf(
+        GetchuPreview.Group(
+            releaseDate = "2024年1月15日",
+            items = listOf(
+                GetchuPreview.Item(
+                    id = "item_001",
+                    title = "【限定版】美少女戦士セーラームーン フィギュア",
+                    brand = "GOOD SMILE COMPANY",
+                    coverUrl = "https://example.com/image/001.jpg",
+                    detailUrl = "https://example.com/detail/001",
+                    price = "¥12,800"
+                ),
+                GetchuPreview.Item(
+                    id = "item_002",
+                    title = "【予約】鬼滅の刃 竈門炭治郎 1/8スケール",
+                    brand = "BANDAI SPIRITS",
+                    coverUrl = "https://example.com/image/002.jpg",
+                    detailUrl = "https://example.com/detail/002",
+                    price = "¥9,800"
+                ),
+                GetchuPreview.Item(
+                    id = "item_003",
+                    title = "【再販】進撃の巨人 リヴァイ アクションフィギュア",
+                    brand = null,  // brand可为空
+                    coverUrl = null, // coverUrl可为空
+                    detailUrl = "https://example.com/detail/003",
+                    price = null // price可为空
+                )
+            )
+        ),
+        GetchuPreview.Group(
+            releaseDate = "2024年2月15日",
+            items = listOf(
+                GetchuPreview.Item(
+                    id = "item_004",
+                    title = "Fate/Grand Order セイバー アルター",
+                    brand = "KOTOBUKIYA",
+                    coverUrl = "https://example.com/image/004.jpg",
+                    detailUrl = "https://example.com/detail/004",
+                    price = "¥15,400"
+                ),
+                GetchuPreview.Item(
+                    id = "item_005",
+                    title = "呪術廻戦 五条悟 1/7スケールフィギュア",
+                    brand = "MAX FACTORY",
+                    coverUrl = "https://example.com/image/005.jpg",
+                    detailUrl = "https://example.com/detail/005",
+                    price = "¥18,700"
+                )
+            )
+        )
+    )
 )

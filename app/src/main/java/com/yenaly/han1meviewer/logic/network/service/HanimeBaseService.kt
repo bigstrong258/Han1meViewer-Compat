@@ -12,8 +12,8 @@ import retrofit2.http.*
  */
 interface HanimeBaseService {
 
-    @GET("/")
-    suspend fun getHomePage(): Response<ResponseBody>
+    @GET
+    suspend fun getHomePage(@Url url: String): Response<ResponseBody>
 
     @GET("search")
     suspend fun getHanimeSearchResult(

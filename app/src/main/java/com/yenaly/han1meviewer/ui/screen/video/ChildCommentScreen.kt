@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +52,7 @@ import com.yenaly.han1meviewer.ui.component.content.LoadingContent
 import com.yenaly.han1meviewer.ui.component.lazy.LazyColumn
 import com.yenaly.han1meviewer.ui.preview.ComponentPreview
 import com.yenaly.han1meviewer.ui.preview.fakeCommentList
+import com.yenaly.han1meviewer.ui.screen.rememberRandomLoadingHint
 import com.yenaly.han1meviewer.util.parseTimeStrToMinutes
 import com.yenaly.han1meviewer.util.safeSortedBy
 import kotlinx.coroutines.flow.Flow
@@ -199,7 +201,7 @@ fun ChildCommentScreen(
 
             val initialLoading = state is WebsiteState.Loading && sortedComments.isEmpty()
             val initialError = state is WebsiteState.Error && sortedComments.isEmpty()
-
+            val loadingHint = rememberRandomLoadingHint()
             PageContent(
                 isLoading = initialLoading,
                 isError = initialError,
@@ -211,7 +213,7 @@ fun ChildCommentScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 24.dp),
-                        message = stringResource(R.string.loading),
+                        message = loadingHint,
                     )
                 },
                 error = {

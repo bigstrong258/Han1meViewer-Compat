@@ -14,9 +14,10 @@ import com.yenaly.han1meviewer.logic.DatabaseRepo
 import com.yenaly.han1meviewer.logic.entity.CheckInType
 import com.yenaly.han1meviewer.logic.model.Announcement
 import com.yenaly.han1meviewer.ui.activity.MainActivity
-import com.yenaly.han1meviewer.ui.screen.home.homepage.AnnouncementDialog
+import com.yenaly.han1meviewer.ui.screen.home.homepage.component.AnnouncementDialog
 import com.yenaly.han1meviewer.ui.component.TripleButtonDialog
-import com.yenaly.han1meviewer.ui.screen.home.HomePageScreen
+import com.yenaly.han1meviewer.ui.screen.home.homepage.HomePageScreen
+import com.yenaly.han1meviewer.ui.screen.home.homepage.HomeUiEvent
 import com.yenaly.han1meviewer.ui.screen.home.homepage.LocalSearchHistoryQuery
 import com.yenaly.han1meviewer.ui.viewmodel.CheckInCalendarViewModel
 import com.yenaly.yenaly_libs.utils.copyTextToClipboard
@@ -53,18 +54,21 @@ fun HomeRouteScreen(
         HomePageScreen(
             viewModel = viewModel,
             isDrawerOpen = isDrawerOpen,
-            onOpenDrawer = onOpenDrawer,
-            onNavigateToPreview = onNavigateToPreview,
-            onNavigateToSearch = { query -> onNavigateToSearch(query) },
-            onOpenSearchPage = { onNavigateToSearch(null) },
-            onNavigateToSearchAdvanced = onNavigateToSearchAdvanced,
-            onOpenVideo = onNavigateToVideo,
-            onLongPressVideoCopy = { code, title ->
-                copyTextToClipboard(getHanimeShareText(title, code))
-                showShortToast(R.string.copy_to_clipboard)
-            },
-            onShowExitDialog = { showExitDialog = true },
-            onShowAnnouncementDialog = { announcement = it },
+            onEvent = { event ->
+                when (event) {
+                    is HomeUiEvent.OpenDrawer -> onOpenDrawer()
+                    is HomeUiEvent.NavigateToPreview -> onNavigateToPreview()
+                    is HomeUiEvent.OpenSearchPage -> onNavigateToSearch(event.query)
+                    is HomeUiEvent.NavigateToSearchAdvanced -> onNavigateToSearchAdvanced(event.params)
+                    is HomeUiEvent.OpenVideo -> onNavigateToVideo(event.videoCode)
+                    is HomeUiEvent.LongPressVideoCopy -> {
+                        copyTextToClipboard(getHanimeShareText(event.videoTitle, event.videoCode))
+                        showShortToast(R.string.copy_to_clipboard)
+                    }
+                    is HomeUiEvent.ShowAnnouncementDialog -> { announcement = event.announcement }
+                    is HomeUiEvent.ShowExitDialog -> { showExitDialog = true }
+                }
+            }
         )
     }
 

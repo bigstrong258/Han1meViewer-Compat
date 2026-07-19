@@ -37,11 +37,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
 import coil3.compose.AsyncImage
 import com.yenaly.han1meviewer.R
 
@@ -57,12 +60,14 @@ fun PreviewImageViewerDialog(
     imageUrls: List<String>,
     initialPage: Int,
     onDismiss: () -> Unit,
+    imageLoader: ImageLoader? = null,
 ) {
     val pagerState = rememberPagerState(
         initialPage = initialPage,
         pageCount = { imageUrls.size.coerceAtLeast(1) })
     var isCurrentImageZoomed by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
+    val resolvedImageLoader = imageLoader ?: SingletonImageLoader.get(context)
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -88,6 +93,7 @@ fun PreviewImageViewerDialog(
                     ) {
                         AsyncImage(
                             model = imageUrls[page],
+                            imageLoader = resolvedImageLoader,
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -108,6 +114,7 @@ fun PreviewImageViewerDialog(
                         )
                         AsyncImage(
                             model = imageUrls[page],
+                            imageLoader = resolvedImageLoader,
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -116,6 +123,7 @@ fun PreviewImageViewerDialog(
                         )
                         ZoomablePreviewImage(
                             imageUrl = imageUrls[page],
+                            imageLoader = resolvedImageLoader,
                             isActivePage = pagerState.currentPage == page,
                             onZoomStateChange = { zoomed ->
                                 if (pagerState.currentPage == page) {
@@ -203,6 +211,7 @@ fun ZoomablePreviewImage(
     isActivePage: Boolean,
     onZoomStateChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
+    imageLoader: ImageLoader,
 ) {
     var scale by remember(imageUrl) { mutableFloatStateOf(1f) }
     var offset by remember(imageUrl) { mutableStateOf(Offset.Zero) }
@@ -215,6 +224,7 @@ fun ZoomablePreviewImage(
 
     AsyncImage(
         model = imageUrl,
+        imageLoader = imageLoader,
         contentDescription = null,
         modifier = Modifier
             .fillMaxSize()

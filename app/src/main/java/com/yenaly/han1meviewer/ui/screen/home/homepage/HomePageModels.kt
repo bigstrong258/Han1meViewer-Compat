@@ -2,7 +2,19 @@ package com.yenaly.han1meviewer.ui.screen.home.homepage
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.yenaly.han1meviewer.logic.model.Announcement
 import com.yenaly.han1meviewer.logic.model.HanimeInfo
+import com.yenaly.han1meviewer.logic.model.HomePage
+
+/**
+ * 首页主要数据源
+ * @param page 主页主要数据
+ * @param announcements 从firebase获取的公告列表
+ */
+data class HomeData(
+    val page: HomePage,
+    val announcements: List<Announcement> = emptyList()
+)
 
 /**
  * 为首页搜索相关组件提供搜索历史查询能力。
@@ -21,6 +33,7 @@ val LocalSearchHistoryQuery = staticCompositionLocalOf<suspend (String) -> List<
  * @param videos 当前分类下展示的视频列表。
  */
 data class HomeCategory(
+    val key: String,
     @param:StringRes val titleRes: Int,
     val genre: String? = null,
     val sort: String? = null,

@@ -4,6 +4,9 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -19,10 +22,13 @@ import androidx.core.net.toUri
 import com.yenaly.han1meviewer.EMPTY_STRING
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
+import com.yenaly.han1meviewer.logic.Parser
 import com.yenaly.han1meviewer.logic.network.DohConfig
 import com.yenaly.han1meviewer.logic.network.HDns
 import com.yenaly.han1meviewer.logic.network.HProxySelector
 import com.yenaly.han1meviewer.logic.network.HanimeNetwork
+import com.yenaly.han1meviewer.logic.network.ServiceCreator
+import com.yenaly.han1meviewer.logic.state.WebsiteState
 import com.yenaly.han1meviewer.logout
 import com.yenaly.han1meviewer.ui.component.ConfirmDialog
 import com.yenaly.han1meviewer.ui.screen.settings.DelayResultUi
@@ -33,6 +39,7 @@ import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.yenaly_libs.ActivityManager
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.showShortToast
+import okhttp3.Request
 import java.net.InetAddress
 import java.util.concurrent.Executors
 
@@ -41,7 +48,11 @@ private const val NETWORK_PROXY_IP = "proxy_ip"
 private const val NETWORK_PROXY_PORT = "proxy_port"
 private const val NETWORK_DOMAIN_NAME = "domain_name"
 private const val NETWORK_SELECTED_BASE_URL = "selectedBaseUrl"
+private const val NETWORK_USE_CUSTOM_MIRROR_SITE = "use_custom_mirror_site"
+private const val NETWORK_CUSTOM_MIRROR_SITE = "custom_mirror_site"
+private const val NETWORK_APPEND_CUSTOM_MIRROR_PATH = "append_custom_mirror_path"
 private const val NETWORK_USE_BUILT_IN_HOSTS = "use_built_in_hosts"
+private const val NETWORK_CUSTOM_HOSTS_DATA = "custom_hosts_data"
 private const val NETWORK_USE_DOH = "use_doh"
 private const val NETWORK_DOH_PRESET = "doh_preset"
 private const val NETWORK_DOH_CUSTOM_URL = "doh_custom_url"
@@ -60,10 +71,18 @@ fun NetworkSettingsRouteScreen() {
     var currentHost by remember { mutableStateOf(Preferences.baseUrl) }
     var isDelayTesting by remember { mutableStateOf(false) }
     var isDohTesting by remember { mutableStateOf(false) }
+    var isCustomMirrorTesting by remember { mutableStateOf(false) }
+    var customMirrorTestResult by remember { mutableStateOf<String?>(null) }
     var showDomainRestartConfirm by remember { mutableStateOf(false) }
     var showHostsRestartConfirm by remember { mutableStateOf(false) }
+    var showCustomHostsValidationError by remember { mutableStateOf<List<String>?>(null) }
+    var showCustomMirrorValidationError by remember { mutableStateOf(false) }
+    var showCustomMirrorWarningConfirm by remember { mutableStateOf(false) }
     var showDohConflictConfirm by remember { mutableStateOf(false) }
     var pendingDomainValue by remember { mutableStateOf("") }
+    var pendingUseCustomMirrorSite by remember { mutableStateOf(Preferences.useCustomMirrorSite) }
+    var pendingCustomMirrorSite by remember { mutableStateOf(Preferences.customMirrorSite) }
+    var pendingAppendCustomMirrorPath by remember { mutableStateOf(Preferences.appendCustomMirrorPath) }
     var pendingDohConflictTarget by remember { mutableStateOf(DohConflictTarget.EnableDoH) }
     var pendingDohEnabled by remember { mutableStateOf(Preferences.useDoH) }
     var pendingDohPreset by remember { mutableStateOf(Preferences.dohPreset) }
@@ -178,11 +197,57 @@ fun NetworkSettingsRouteScreen() {
         dohCustomUrl = Preferences.dohCustomUrl,
         dohBootstrapIps = Preferences.dohBootstrapIps,
         dohTimeoutSeconds = Preferences.dohTimeoutSeconds,
+        useCustomMirrorSite = Preferences.useCustomMirrorSite,
+        customMirrorSite = Preferences.customMirrorSite,
+        appendCustomMirrorPath = Preferences.appendCustomMirrorPath,
+        customMirrorTestResult = customMirrorTestResult,
+        isCustomMirrorTesting = isCustomMirrorTesting,
         onDomainChange = { newValue ->
             val origin = Preferences.baseUrl
             if (newValue != origin) {
                 pendingDomainValue = newValue
+                pendingUseCustomMirrorSite = false
+                pendingCustomMirrorSite = Preferences.customMirrorSite
+                pendingAppendCustomMirrorPath = Preferences.appendCustomMirrorPath
                 showDomainRestartConfirm = true
+            }
+        },
+        onSaveCustomMirrorSite = { enabled, url, appendPath ->
+            val normalizedUrl = normalizeCustomMirrorSite(url)
+            if (enabled && normalizedUrl == null) {
+                showCustomMirrorValidationError = true
+                return@NetworkSettingsScreen
+            }
+            val customMirrorSite = normalizedUrl.orEmpty()
+            if (enabled != Preferences.useCustomMirrorSite ||
+                customMirrorSite != Preferences.customMirrorSite ||
+                appendPath != Preferences.appendCustomMirrorPath
+            ) {
+                pendingUseCustomMirrorSite = enabled
+                pendingCustomMirrorSite = customMirrorSite
+                pendingAppendCustomMirrorPath = appendPath
+                if (enabled) {
+                    showCustomMirrorWarningConfirm = true
+                } else {
+                    showDomainRestartConfirm = true
+                }
+            }
+        },
+        onTestCustomMirrorSite = { url, appendPath ->
+            val normalizedUrl = normalizeCustomMirrorSite(url)
+            if (normalizedUrl == null) {
+                customMirrorTestResult = context.getString(R.string.custom_mirror_site_invalid)
+                return@NetworkSettingsScreen
+            }
+            if (isCustomMirrorTesting) return@NetworkSettingsScreen
+            isCustomMirrorTesting = true
+            customMirrorTestResult = context.getString(R.string.custom_mirror_site_testing)
+            executor.execute {
+                val result = testCustomMirrorSite(context, normalizedUrl, appendPath)
+                Handler(Looper.getMainLooper()).post {
+                    customMirrorTestResult = result
+                    isCustomMirrorTesting = false
+                }
             }
         },
         onUseBuiltInHostsChange = { value ->
@@ -195,6 +260,21 @@ fun NetworkSettingsRouteScreen() {
             refreshKey++
             showHostsRestartConfirm = true
         },
+        onSaveCustomHosts = { data ->
+            val errors = HDns.validateCustomHosts(data)
+            if (errors.isNotEmpty()) {
+                showCustomHostsValidationError = errors
+                return@NetworkSettingsScreen
+            }
+            Preferences.preferenceSp.edit(commit = true) {
+                putString(NETWORK_CUSTOM_HOSTS_DATA, data)
+            }
+            refreshKey++
+            if (Preferences.useBuiltInHosts) {
+                HanimeNetwork.rebuildNetwork()
+            }
+        },
+        customHostsData = Preferences.customHostsData,
         onSaveDohSettings = { enabled, preset, url, bootstrapIps, timeoutSeconds ->
             pendingDohEnabled = enabled
             pendingDohPreset = preset
@@ -276,14 +356,38 @@ fun NetworkSettingsRouteScreen() {
         cancelable = false,
         onConfirm = {
             Preferences.preferenceSp.edit(commit = true) {
-                putString(NETWORK_DOMAIN_NAME, pendingDomainValue)
-                putString(NETWORK_SELECTED_BASE_URL, pendingDomainValue)
+                if (pendingDomainValue.isNotEmpty()) {
+                    putString(NETWORK_DOMAIN_NAME, pendingDomainValue)
+                    putString(NETWORK_SELECTED_BASE_URL, pendingDomainValue)
+                }
+                putBoolean(NETWORK_USE_CUSTOM_MIRROR_SITE, pendingUseCustomMirrorSite)
+                putString(NETWORK_CUSTOM_MIRROR_SITE, pendingCustomMirrorSite)
+                putBoolean(NETWORK_APPEND_CUSTOM_MIRROR_PATH, pendingAppendCustomMirrorPath)
             }
             logout()
             ActivityManager.restart(killProcess = true)
         },
-        onDismiss = { showDomainRestartConfirm = false },
+        onDismiss = {
+            pendingDomainValue = ""
+            pendingUseCustomMirrorSite = Preferences.useCustomMirrorSite
+            pendingCustomMirrorSite = Preferences.customMirrorSite
+            pendingAppendCustomMirrorPath = Preferences.appendCustomMirrorPath
+            showDomainRestartConfirm = false
+        },
     )
+
+    if (showCustomMirrorValidationError) {
+        AlertDialog(
+            onDismissRequest = { showCustomMirrorValidationError = false },
+            title = { Text(stringResource(R.string.attention)) },
+            text = { Text(stringResource(R.string.custom_mirror_site_invalid)) },
+            confirmButton = {
+                TextButton(onClick = { showCustomMirrorValidationError = false }) {
+                    Text(stringResource(R.string.confirm))
+                }
+            },
+        )
+    }
 
     ConfirmDialog(
         visible = showHostsRestartConfirm,
@@ -294,6 +398,39 @@ fun NetworkSettingsRouteScreen() {
         cancelable = false,
         onConfirm = { ActivityManager.restart(killProcess = true) },
         onDismiss = { showHostsRestartConfirm = false },
+    )
+
+    val validationErrors = showCustomHostsValidationError
+    if (validationErrors != null) {
+        AlertDialog(
+            onDismissRequest = { showCustomHostsValidationError = null },
+            title = { Text(stringResource(R.string.attention)) },
+            text = { Text(validationErrors.joinToString("\n")) },
+            confirmButton = {
+                TextButton(onClick = { showCustomHostsValidationError = null }) {
+                    Text(stringResource(R.string.confirm))
+                }
+            },
+        )
+    }
+
+    ConfirmDialog(
+        visible = showCustomMirrorWarningConfirm,
+        title = stringResource(R.string.attention),
+        message = stringResource(R.string.custom_mirror_site_warning),
+        confirmText = stringResource(R.string.confirm),
+        dismissText = stringResource(R.string.cancel),
+        cancelable = false,
+        onConfirm = {
+            showCustomMirrorWarningConfirm = false
+            showDomainRestartConfirm = true
+        },
+        onDismiss = {
+            pendingUseCustomMirrorSite = Preferences.useCustomMirrorSite
+            pendingCustomMirrorSite = Preferences.customMirrorSite
+            pendingAppendCustomMirrorPath = Preferences.appendCustomMirrorPath
+            showCustomMirrorWarningConfirm = false
+        },
     )
 
     ConfirmDialog(
@@ -352,10 +489,105 @@ private fun buildNetworkSettingsUiState(context: Context): NetworkSettingsUiStat
             else -> context.getString(R.string.direct)
         },
         useBuiltInHosts = Preferences.useBuiltInHosts,
+        useCustomMirrorSite = Preferences.useCustomMirrorSite,
+        customMirrorSite = Preferences.customMirrorSite,
+        appendCustomMirrorPath = Preferences.appendCustomMirrorPath,
         useDoH = Preferences.useDoH,
         dohSummary = buildDohSummary(context),
         delaySummary = context.getString(R.string.node_latency_sum),
     )
+}
+
+private fun normalizeCustomMirrorSite(url: String): String? {
+    val trimmed = url.trim().trimEnd('/')
+    val uri = runCatching { trimmed.toUri() }.getOrNull() ?: return null
+    if (uri.scheme != "https" || uri.host.isNullOrBlank()) return null
+    if (!uri.query.isNullOrBlank() || !uri.fragment.isNullOrBlank()) return null
+    return url.trim()
+}
+
+private fun testCustomMirrorSite(context: Context, homeUrl: String, appendPath: Boolean): String {
+    return runCatching {
+        val request = Request.Builder().url(homeUrl).get().build()
+        ServiceCreator.hClient.newCall(request).execute().use { response ->
+            val finalUrl = response.request.url.toString()
+            val body = response.body.string()
+            if (!response.isSuccessful) {
+                return context.getString(
+                    R.string.custom_mirror_site_test_failed_http,
+                    response.code,
+                    finalUrl,
+                )
+            }
+
+            val apiBaseUrl = buildCustomMirrorApiBaseUrl(homeUrl, appendPath)
+            val watchTestResult = testCustomMirrorWatchUrl(context, apiBaseUrl)
+            when (val parseResult = Parser.homePageVer2(body)) {
+                is WebsiteState.Success -> if (watchTestResult == null) {
+                    context.getString(
+                        R.string.custom_mirror_site_test_success,
+                        finalUrl,
+                        apiBaseUrl,
+                    )
+                } else {
+                    context.getString(
+                        R.string.custom_mirror_site_test_partial_success,
+                        finalUrl,
+                        apiBaseUrl,
+                        watchTestResult,
+                    )
+                }
+
+                is WebsiteState.Error -> context.getString(
+                    R.string.custom_mirror_site_test_parse_failed,
+                    finalUrl,
+                    parseResult.throwable.message ?: parseResult.throwable::class.java.simpleName,
+                )
+
+                WebsiteState.Loading -> context.getString(
+                    R.string.custom_mirror_site_test_parse_failed,
+                    finalUrl,
+                    context.getString(R.string.loading),
+                )
+            }
+        }
+    }.getOrElse { throwable ->
+        context.getString(
+            R.string.custom_mirror_site_test_failed,
+            throwable.message ?: throwable::class.java.simpleName,
+        )
+    }
+}
+
+private fun testCustomMirrorWatchUrl(context: Context, apiBaseUrl: String): String? {
+    return runCatching {
+        val url = apiBaseUrl + "search"
+        val request = Request.Builder().url(url).get().build()
+        ServiceCreator.hClient.newCall(request).execute().use { response ->
+            if (response.isSuccessful) {
+                null
+            } else {
+                context.getString(
+                    R.string.custom_mirror_site_watch_test_failed_http,
+                    response.code,
+                    response.request.url.toString(),
+                )
+            }
+        }
+    }.getOrElse { throwable ->
+        context.getString(
+            R.string.custom_mirror_site_watch_test_failed,
+            throwable.message ?: throwable::class.java.simpleName,
+        )
+    }
+}
+
+private fun buildCustomMirrorApiBaseUrl(homeUrl: String, appendPath: Boolean): String {
+    val url = if (appendPath) homeUrl else {
+        val uri = homeUrl.toUri()
+        "${uri.scheme}://${uri.encodedAuthority}"
+    }
+    return if (url.endsWith('/')) url else "$url/"
 }
 
 private fun buildDohSummary(context: Context): String {

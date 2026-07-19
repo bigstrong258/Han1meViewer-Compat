@@ -26,6 +26,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,6 +56,7 @@ import com.yenaly.han1meviewer.ui.component.content.EmptyContent
 import com.yenaly.han1meviewer.ui.component.content.ErrorContent
 import com.yenaly.han1meviewer.ui.component.content.LoadingContent
 import com.yenaly.han1meviewer.ui.component.lazy.LazyColumn
+import com.yenaly.han1meviewer.ui.screen.rememberRandomLoadingHint
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -64,6 +67,7 @@ fun PreviewContent(
     previewInfoList: List<HanimePreview.PreviewInfo>,
     modifier: Modifier = Modifier,
 ) {
+    val loadingHint = rememberRandomLoadingHint()
     Column(modifier = modifier.fillMaxSize()) {
         TopAppBar(
             title = {
@@ -102,6 +106,12 @@ fun PreviewContent(
                 }
             },
             actions = {
+                FilledIconButton(onClick = { onEvent(PreviewEvent.OnOpenGetchuPreview) }) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarMonth,
+                        contentDescription = stringResource(R.string.getchu_preview),
+                    )
+                }
                 FilledIconButton(onClick = {
                     onEvent(PreviewEvent.OnOpenComment(
                         uiState.currentDateLabel,
@@ -173,18 +183,25 @@ fun PreviewContent(
 
             when (uiState.displayState) {
                 is WebsiteState.Loading -> item {
-                    LoadingContent(modifier = Modifier.padding(horizontal = 16.dp))
+                    LoadingContent(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        message = loadingHint
+                    )
                 }
 
                 is WebsiteState.Error -> item {
+                    val isPreviewEmpty = uiState.displayState.throwable is HanimeNotFoundException
                     ErrorContent(
                         title = stringResource(R.string.hanime_list),
-                        message = if (uiState.displayState.throwable is HanimeNotFoundException) {
-                            stringResource(R.string.preview_page_updating)
+                        message = if (isPreviewEmpty) {
+                            stringResource(R.string.preview_page_updating_getchu_hint)
                         } else {
                             uiState.displayState.throwable.pienization.toString()
                         },
-                        onRetry = { onEvent(PreviewEvent.OnRetryLoad) },
+                        onRetry = {
+                            onEvent(if (isPreviewEmpty) PreviewEvent.OnOpenGetchuPreview else PreviewEvent.OnRetryLoad)
+                        },
+                        retryText = stringResource(if (isPreviewEmpty) R.string.view_getchu_preview else R.string.retry),
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
                 }

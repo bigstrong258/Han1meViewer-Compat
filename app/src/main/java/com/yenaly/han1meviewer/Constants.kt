@@ -27,7 +27,9 @@ val LOCAL_DATE_TIME_FORMAT = LocalDateTime.Format {
 // 网络基本设置
 
 const val USER_AGENT =
-    "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36"
+    "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Mobile Safari/537.36"
+const val DESKTOP_USER_AGENT =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"
 
 // 設置發佈日期年份，在搜索的tag裏
 
@@ -41,37 +43,6 @@ const val SEARCH_YEAR_RANGE_START = 1990
  */
 const val SEARCH_YEAR_RANGE_END = BuildConfig.SEARCH_YEAR_RANGE_END
 
-// intent傳值用名稱
-
-const val FROM_DOWNLOAD = "FROM_DOWNLOAD"
-
-const val VIDEO_CODE = "VIDEO_CODE"
-
-//@Deprecated("Use [ADVANCED_SEARCH_MAP] instead")
-//const val FROM_VIDEO_TAG = "FROM_VIDEO_TAG"
-
-/**
- * 接受类型 [AdvancedSearchMap] 或者 [String]
- */
-const val ADVANCED_SEARCH_MAP = "ADVANCED_SEARCH_MAP"
-
-const val COMMENT_ID = "COMMENT_ID"
-
-const val DATE_CODE = "DATE_CODE"
-
-//const val CSRF_TOKEN = "CSRF_TOKEN"
-
-// Result Code
-
-//const val LOGIN_TO_MAIN_ACTIVITY = 0
-
-// 给rv传值，判断布局需要wrap_content还是match_parent，不填则为默认
-// 设置布局为MATCH_PARENT可以使rv在GridLayoutManager下能居中，反之不能
-
-const val VIDEO_LAYOUT_WRAP_CONTENT = 1
-
-const val VIDEO_LAYOUT_MATCH_PARENT = 2
-
 const val VIDEO_COMMENT_PREFIX = "video"
 
 const val PREVIEW_COMMENT_PREFIX = "preview"
@@ -82,8 +53,7 @@ const val PREVIEW_COMMENT_PREFIX = "preview"
 val HANIME_BASE_URL = Preferences.baseUrl
 
 /**
- * 如果添加备选网址别忘了改[String.toVideoCode]的videoUrlRegex
- * 没想弄动态匹配，觉得古法修改挺好的。
+ * 如果添加备选网址别忘了确认[String.toVideoCode]的videoUrlRegex
  */
 object HanimeConstants {
     val HANIME_HOSTNAME = arrayOf("hanime1.me","hanime1.com","hanimeone.me","javchu.com")
@@ -125,3 +95,4 @@ const val UPDATE_NOTIFICATION_CHANNEL = "update_channel"
 // File
 
 const val FILE_PROVIDER_AUTHORITY = "${BuildConfig.APPLICATION_ID}.fileProvider"
+const val GETCHU_BASE_URL = "https://www.getchu.com/"

@@ -58,6 +58,14 @@ data class SearchRoute(
 object PreviewRoute
 
 @Serializable
+object GetchuPreviewRoute
+
+@Serializable
+data class GetchuPreviewDetailRoute(
+    val id: String,
+)
+
+@Serializable
 data class PreviewCommentRoute(
     val date: String,
     val dateCode: String,
@@ -177,6 +185,16 @@ enum class MainDestinationSpec(
     Preview(
         drawerDestination = null,
         routeClass = PreviewRoute::class,
+        drawerEnabled = false,
+    ),
+    GetchuPreview(
+        drawerDestination = null,
+        routeClass = GetchuPreviewRoute::class,
+        drawerEnabled = false,
+    ),
+    GetchuPreviewDetail(
+        drawerDestination = null,
+        routeClass = GetchuPreviewDetailRoute::class,
         drawerEnabled = false,
     ),
     PreviewComment(

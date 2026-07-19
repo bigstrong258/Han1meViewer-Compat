@@ -11,6 +11,7 @@ import com.yenaly.han1meviewer.ui.viewmodel.PreviewViewModel
 fun PreviewRouteScreen(
     activity: MainActivity,
     onBack: () -> Unit,
+    onNavigateToGetchuPreview: () -> Unit,
     onNavigateToPreviewComment: (String, String) -> Unit,
     onNavigateToVideo: (String) -> Unit,
 ) {
@@ -19,6 +20,7 @@ fun PreviewRouteScreen(
 
     PreviewScreen(
         onBack = onBack,
+        onNavigateToGetchuPreview = onNavigateToGetchuPreview,
         onNavigateToPreviewComment = onNavigateToPreviewComment,
         onNavigateToVideo = onNavigateToVideo,
         previewViewModel = previewViewModel,

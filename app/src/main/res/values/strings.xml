@@ -42,7 +42,17 @@
     <string name="hanime_list">新番列表</string>
     <string name="latest_hanime_list_monthly">%s 裏番新番列表</string>
     <string name="preview_page_updating">站方正在更新新番預告頁面，請嘗試查看其他月份</string>
+    <string name="preview_page_updating_getchu_hint">站方正在更新新番預告頁面，可先查看 Getchu 新番預告。Getchu 可能需要 VPN 才能正常訪問。</string>
     <string name="latest_hanime_comment">%s 新番評論區</string>
+    <string name="view_getchu_preview">查看 Getchu 預告</string>
+    <string name="getchu_preview">Getchu 新番預告</string>
+    <string name="getchu_preview_title">Getchu %s 新番預告</string>
+    <string name="getchu_preview_detail">Getchu 新番詳情</string>
+    <string name="getchu_sample_images">樣品圖</string>
+    <string name="getchu_series">系列商品</string>
+    <string name="getchu_product_intro">商品介紹</string>
+    <string name="getchu_story">故事</string>
+    <string name="getchu_staff">製作人員</string>
     <string name="my_list">我的清單</string>
     <string name="watch_later">稍後觀看</string>
     <string name="fav_video">喜歡的影片</string>
@@ -159,6 +169,8 @@
     <string name="copy_">複製</string>
     <string name="h_keyframes_shared_by_other_detected">檢測到他人分享的關鍵H幀</string>
     <string name="h_keyframes_shared_by_other_not_detected">未檢測到他人分享的關鍵H幀</string>
+    <string name="h_keyframes_import_shared">導入分享的關鍵H幀</string>
+    <string name="h_keyframes_import_shared_hint">粘貼分享內容</string>
     <string name="share_to_others">分享給其他人</string>
     <string name="latest_release">最新上市</string>
     <string name="chinese_subtitle">中文字幕</string>
@@ -167,9 +179,33 @@
     <string name="start_all">全部開始</string>
     <string name="pause_all">全部暫停</string>
     <string name="domain_name">域名</string>
+    <string name="custom_mirror_site">自定義鏡像站</string>
+    <string name="enable_custom_mirror_site">啟用自定義鏡像站</string>
+    <string name="custom_mirror_site_hint">請輸入一個與主站結構相同、直達首頁的自定義鏡像站，格式為https://www.example.com、https://www.example.com/enter 或 https://www.example.com/enter/；首頁會按輸入原樣請求</string>
+    <string name="custom_mirror_site_invalid">請輸入有效且直達首頁的 HTTPS 網址，格式為 https://www.example.com、https://www.example.com/enter 或 https://www.example.com/enter/</string>
+    <string name="custom_mirror_site_warning">自定義鏡像站不一定可用，也可能與主站存在差異。
+
+部分鏡像站可能無法登入、Cookie 無法共用、驗證或評論等功能不可用，甚至可能存在安全風險。請確認你信任該站點後再繼續。</string>
+    <string name="custom_mirror_api_path_mode">其他接口路徑</string>
+    <string name="custom_mirror_api_path_follow_home">跟隨首頁目錄</string>
+    <string name="custom_mirror_api_path_follow_home_summary">例如：https://www.example.com/enter/search</string>
+    <string name="custom_mirror_api_path_root">使用根域名</string>
+    <string name="custom_mirror_api_path_root_summary">例如：https://www.example.com/search。首頁始終按上方輸入原樣請求</string>
+    <string name="test_connection">測試連接</string>
+    <string name="custom_mirror_site_testing">正在測試連接...</string>
+    <string name="custom_mirror_site_test_success">測試成功\n首頁：%1$s\n其他接口測試：%2$ssearch</string>
+    <string name="custom_mirror_site_test_partial_success">首頁測試成功，但其他接口測試失敗\n首頁：%1$s\n其他接口基址：%2$s\n原因：%3$s</string>
+    <string name="custom_mirror_site_test_failed">測試失敗：%1$s</string>
+    <string name="custom_mirror_site_test_failed_http">測試失敗：HTTP %1$d\n首頁：%2$s</string>
+    <string name="custom_mirror_site_test_parse_failed">已連接，但首頁結構解析失敗\n首頁：%1$s\n原因：%2$s</string>
+    <string name="custom_mirror_site_watch_test_failed">search 測試失敗：%1$s</string>
+    <string name="custom_mirror_site_watch_test_failed_http">search 測試失敗：HTTP %1$d\nURL：%2$s</string>
     <string name="use_built_in_hosts">應用內建 Hosts</string>
     <string name="network_settings">網路設定</string>
-    <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\nVPN？那是什麼？</string>
+    <string name="use_built_in_hosts_summary">應用提供的主機到 IP 的映射\n若已設定自定義 Hosts，則優先使用\nVPN？那是什麼？</string>
+    <string name="custom_hosts">自定義 Hosts</string>
+    <string name="custom_hosts_format">多個 IP 以逗號分隔，如 1.2.3.4,5.6.7.8</string>
+    <string name="custom_hosts_empty_summary">未設定（使用內建映射）</string>
     <string name="use_doh">使用 DoH</string>
     <string name="doh_settings">DoH 設定</string>
     <string name="doh_preset">DoH 預設</string>
@@ -341,8 +377,19 @@
     <string name="this_data_exists">該檔案已存在！</string>
     <string name="download_failed_s_exists">下載失敗：%1$s 已存在</string>
     <string name="download_task_failed">下載任務失敗！</string>
-    <string name="download_task_failed_s">下載任務失敗，請檢查下載目錄是否存在該文件：%1$s</string>
+    <string name="download_task_failed_s">下載任務失敗：%1$s</string>
     <string name="download_task_failed_s_reason_s">下載失敗：%1$s\n原因為：%2$s</string>
+    <string name="download_task_retrying">下載暫時中斷，正在重試</string>
+    <string name="download_task_retrying_s_reason_s">下載暫時中斷：%1$s\n原因：%2$s\n稍後會自動繼續。</string>
+    <string name="download_failed_tap_retry">下載失敗，點按重試</string>
+    <string name="download_error_network">網路連線中斷，請檢查網路後稍等自動重試。</string>
+    <string name="download_error_timeout">連線逾時，目前網路可能較慢，稍後會自動重試。</string>
+    <string name="download_error_dns">無法解析下載伺服器地址，請檢查網路或 DNS 設定。</string>
+    <string name="download_error_connect">無法連線到下載伺服器，請切換網路或稍後重試。</string>
+    <string name="download_error_cancelled">下載已暫停。</string>
+    <string name="download_error_storage">無法寫入下載檔案，請檢查儲存空間、目錄權限或重新選擇下載目錄。</string>
+    <string name="download_error_range_not_supported">伺服器不支援從斷點位置繼續下載，請刪除該任務後重新下載。</string>
+    <string name="download_error_file_info">無法取得檔案大小或下載資訊，請稍後重試。</string>
     <string name="custom">自訂</string>
     <string name="show_bottom_progress">顯示底部進度條</string>
     <string name="default_playback_speed">預設播放速度</string>
@@ -391,6 +438,11 @@
     <string name="use_lock_screen_sum">開啟後，進入應用程式時需驗證螢幕鎖定，防止他人開啟。</string>
     <string name="not_compact_lock_screen">您的系統版本不支援驗證螢幕鎖定，因此無法啟用此功能。</string>
     <string name="not_set_sys_lock">請先在系統設定中啟用指紋、圖案或PIN碼鎖定。</string>
+    <string name="usage_notice_title">使用須知</string>
+    <string name="usage_notice_content">🧩 本應用程式為獨立第三方工具，與 https://hanime1.me/ 及其關聯方不存在隸屬、合作、授權或代言關係。\n\n📢 請勿在任何公開平台宣傳、搬運或引流本應用程式。若因此帶來風險，維護者可能隨時歸檔或隱藏倉庫，並移除已編譯發行版。\n\n🔍 本應用程式僅透過常規網路請求和 HTML DOM 解析取得目標網站公開顯示的資訊，不存取後端資料庫，不進行注入攻擊、授權繞過或取得非公開及隱私資料。\n\n⚖️ 本應用程式僅供技術研究、行動端體驗最佳化與學習交流使用，不提供商業化服務。使用者應自行遵守所在地區法律法規和目標網站規則，並承擔使用本應用程式產生的一切後果。\n\n©️ 原始影片、圖文及相關內容版權歸 https://hanime1.me/ 或原始製作、發行方所有。本應用程式不儲存版權內容，不修改原始內容，也不聲稱擁有任何內容所有權。\n\n🛡️ 如對相關內容存在版權、DMCA、人身攻擊或其他投訴，請直接聯絡源網站管理方處理。本應用程式開發者無法處理或協助處理相關內容糾紛。\n\nℹ️ 建議透過官方渠道支持原站內容與網站營運者。\n\n🔞 R18 警告：未滿 18 歲禁止下載和使用本應用程式。\n\n2026 年 6 月 1 日</string>
+    <string name="usage_notice_accept">我已閱讀並同意</string>
+    <string name="usage_notice_accept_countdown">請閱讀 %1$d 秒</string>
+    <string name="usage_notice_decline">不同意並退出</string>
     <string-array name="lang_display_names">
         <item>跟随系统</item>
         <item>简体中文</item>
@@ -580,7 +632,7 @@
     <string name="directory_saved">目錄已保存:%s</string>
     <string name="no_directory_selected">未選擇目錄，未作變更</string>
     <string name="select_download_folder">選擇您的下載資料夾</string>
-    <string name="select_folder_message">使用系統檔案選擇器指定一個資料夾：\n\n✓ 自主選擇儲存位置\n✓ 下載檔案永久保存\n✓ 方便與其他應用共享\n✓ 解除安裝應用不影響檔案\n✗ 不支援斷點續傳\n\n建議選擇Downloads下新建目錄或自訂資料夾</string>
+    <string name="select_folder_message">使用系統檔案選擇器指定一個資料夾：\n\n✓ 自主選擇儲存位置\n✓ 下載檔案永久保存\n✓ 方便與其他應用共享\n✓ 解除安裝應用不影響檔案\n✓ 支援斷點續傳\n\n請勿移動、重新命名或撤銷該資料夾權限，否則需要重新選擇目錄。建議選擇 Downloads 下的新建目錄或自訂資料夾。</string>
     <string name="restore_default_path">恢復預設儲存路徑</string>
     <string name="restore_default_message">確定要恢復為應用內部儲存嗎？\n\n● 當前下載的檔案不會被移動\n● 後續下載將儲存到應用內部\n● 應用解除安裝後檔案將被清除\n● 選擇外部路徑後，可以使用檔案遷移功能移出</string>
     <string name="default_path_restored">已恢復預設儲存路徑</string>
@@ -616,7 +668,7 @@
     <string name="sort_most_likes">最多點讚</string>
     <string name="sort_most_dislikes">最多點踩</string>
     <string name="sort_comment">評論排序</string>
-    <string name="theme">主題</string>
+    <string name="theme">主題與外觀</string>
     <string name="dynamic_color_title">動態配色</string>
     <string name="dynamic_color_summary">開啟後跟隨系統主題色，僅支援Android 12以上</string>
     <string name="dark_theme">深色主題</string>
@@ -809,6 +861,21 @@
         <item>解鎖你的隱藏欲望</item>
         <item>臉紅的關鍵詞是什麼？</item>
         <item>深夜好奇點什麼…</item>
+        <item>噓，這是屬於我們兩個人的秘密…</item>
+        <item>傲嬌的你，其實很想搜那個吧？</item>
+        <item>把持住！這裡的濃度有點高哦？</item>
+        <item>四海皆兄弟，老哥借一步說話？</item>
+        <item>你、你可別輸入什麼奇怪的詞啊！</item>
+        <item>這裡沒有監控，偷偷搜吧~</item>
+        <item>夜深了，該滿足一下好奇心了~</item>
+        <item>好東西，不打算和本蘿莉/看板娘分享嗎？</item>
+        <item>通往新世界的大門，輸入密碼開啟！</item>
+        <item>聽話，讓我看看！</item>
+        <item>搜索框已經洗乾淨了，請享用！</item>
+        <item>你腦子裡在想什麼，搜索框都知道哦？</item>
+        <item>嗶！學生卡/老司機卡，請刷卡搜索！</item>
+        <item>渴望著什麼呢？悄悄告訴我嘛~</item>
+        <item>搜索一下，打開不可以色色的新世界！</item>
     </string-array>
 
     <string name="theme_color">主題色</string>
@@ -855,4 +922,25 @@
     <string name="backup_export_failed">資料備份匯出失敗</string>
     <string name="backup_import_success">資料備份已匯入</string>
     <string name="backup_import_failed">資料備份匯入失敗，請確認檔案是否正確</string>
+    <string name="home_category_layout">首頁欄目排序與隱藏</string>
+    <string name="home_category_layout_summary">目前顯示 %1$d / %2$d 個欄目</string>
+    <string name="home_category_layout_dialog_summary">長按並拖動欄目可調整順序，關閉開關即可隱藏欄目。</string>
+    <string name="debug">除錯</string>
+    <string-array name="loading_hints">
+        <item>哼，才、才沒有讓你久等呢！只是數據跑得慢了一點點而已！</item>
+        <item>笨蛋！盯著看它也不會變快啦！……好啦，再等我三秒鐘！</item>
+        <item>（吧唧吧唧）……啊！被發現了！等我咽下這塊餅乾就來！</item>
+        <item>嗚哇！前面的數據線好像纏在一起了！</item>
+        <item>正在努力搬運快樂中……</item>
+        <item>進度條正在偷吃美味小蛋糕，目前進度：2/3個！</item>
+        <item>隱藏著黑暗力量的進度條啊，在我面前顯示你真正的速度吧！</item>
+        <item>正在同步異世界信號……嗶嗶——電波對接成功率 99%！</item>
+        <item>知道你急，但先別急嘛~ 趁現在眨眨眼，休息一下脖子哦！</item>
+        <item>正在調教不聽話的小代碼，稍等一下下啦！</item>
+        <item>大哥哥，前面的加載條還很長呢……</item>
+        <item>發動魔法卡：強欲之壺！從卡組抽取更多加載時間！</item>
+        <item>您的加載請求已被勇者小隊優先處理，當前排名：第1位！</item>
+        <item>搓手手期待ing……</item>
+        <item>◝(⑅•ᴗ•⑅)◜..°♡ 傳送中……</item>
+    </string-array>
 </resources>
