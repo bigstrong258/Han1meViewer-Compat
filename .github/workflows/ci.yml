@@ -4,7 +4,7 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "compose" ]
     paths-ignore:
       - "**.md"
 
@@ -44,7 +44,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEYSTORE_FILE: ${{ github.workspace }}/keystore.jks
           HA_GITHUB_TOKEN: ${{ secrets.HA_GITHUB_TOKEN }}
-          HA1_VERSION_SOURCE: 'ci'
+          HA1_VERSION_SOURCE: ${{ github.ref_name == 'compose' && 'preview' || 'ci' }}
 
       - name: Upload APK Zip
         uses: actions/upload-artifact@v4
