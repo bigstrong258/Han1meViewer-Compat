@@ -758,8 +758,8 @@ Recommendations are as follows:\n
     <string name="webview_upgrade_complete_restart">WebView updated successfully. Please clear the app from recents and reopen it.</string>
     <string name="webview_upgrade_restart_required">WebView is ready. Please clear the app from recents and reopen it.</string>
     <string name="webview_upgrade_failed">WebView update failed</string>
-    <string name="webview_upgrade_other_brand_hint">You can update WebView from the app store. Please try updating it and use the original HanimeViewer project first; use this project only if you cannot update WebView.</string>
-    <string name="webview_upgrade_samsung_unsupported">Samsung devices are not supported by JonaNorman/WebViewUpgrade. Please update WebView through the app store or system update.</string>
+    <string name="webview_upgrade_other_brand_hint">The system WebView will be used. Verification may fail if it is too old; update WebView through the app store or a system update when possible, or continue trying to use this app if no update is available.</string>
+    <string name="webview_upgrade_samsung_unsupported">The bundled WebView is disabled on Samsung devices, so the system WebView will be used. Update it through the app store or a system update when possible.</string>
     <string name="switch_site">Switch Site</string>
     <string name="current_site">Current Site：</string>
     <string name="confirm_switch_site">Are you sure you want to switch site?</string>

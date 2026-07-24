@@ -120,7 +120,15 @@ class HomePageViewModel: ViewModel() {
                     val list = mutableListOf<Announcement>()
                     if (snapshot.exists()) {
                         for (announceSnap in snapshot.children) {
-                            val announcement = announceSnap.getValue(Announcement::class.java)
+                            val announcement = runCatching {
+                                announceSnap.getValue(Announcement::class.java)
+                            }.onFailure { error ->
+                                Log.e(
+                                    "Announcement",
+                                    "公告 ${announceSnap.key} 格式错误，已跳过",
+                                    error,
+                                )
+                            }.getOrNull()
                             if (announcement != null && announcement.isActive) {
                                 list.add(announcement)
                             }

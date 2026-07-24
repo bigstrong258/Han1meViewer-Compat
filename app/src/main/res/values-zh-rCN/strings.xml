@@ -765,8 +765,8 @@
     <string name="webview_upgrade_complete_restart">WebView 更新成功，请手动清理后台并重新打开应用</string>
     <string name="webview_upgrade_restart_required">WebView 已准备，请手动清理后台并重新打开应用</string>
     <string name="webview_upgrade_failed">WebView 更新失败</string>
-    <string name="webview_upgrade_other_brand_hint">可以通过应用商店更新 WebView，请尝试更新后使用原 HanimeViewer 项目；如果更新不了，再使用这个项目</string>
-    <string name="webview_upgrade_samsung_unsupported">三星手机不支持 JonaNorman/WebViewUpgrade，请通过应用商店或系统更新 WebView</string>
+    <string name="webview_upgrade_other_brand_hint">当前将继续使用系统 WebView。版本过低时验证可能失败；如有条件请通过应用商店或系统更新 WebView，无法更新也可以继续尝试使用本应用</string>
+    <string name="webview_upgrade_samsung_unsupported">三星设备不启用内置 WebView，将继续使用系统 WebView；如有条件请通过应用商店或系统更新 WebView</string>
     <string name="switch_site">切换站点</string>
     <string name="current_site">当前站点：</string>
     <string name="confirm_switch_site">确定要切换站点吗？</string>

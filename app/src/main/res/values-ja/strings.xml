@@ -763,8 +763,8 @@ hanime1.me以外のドメインは、特定の時間帯にhanime1.meにリダイ
     <string name="webview_upgrade_complete_restart">WebViewの更新が完了しました。最近使ったアプリから終了して再度開いてください。</string>
     <string name="webview_upgrade_restart_required">WebViewの準備ができました。最近使ったアプリから終了して再度開いてください。</string>
     <string name="webview_upgrade_failed">WebViewの更新に失敗しました</string>
-    <string name="webview_upgrade_other_brand_hint">アプリストアからWebViewを更新できます。更新後はまず元のHanimeViewerプロジェクトを使用し、更新できない場合のみこのプロジェクトを使用してください。</string>
-    <string name="webview_upgrade_samsung_unsupported">Samsung端末はJonaNorman/WebViewUpgradeに対応していません。アプリストアまたはシステム更新でWebViewを更新してください。</string>
+    <string name="webview_upgrade_other_brand_hint">システム WebView を引き続き使用します。バージョンが古いと認証に失敗する可能性があります。可能であればアプリストアまたはシステム更新で WebView を更新してください。更新できない場合も、このまま本アプリをお試しいただけます。</string>
+    <string name="webview_upgrade_samsung_unsupported">Samsung 端末では内蔵 WebView を使用せず、システム WebView を使用します。可能であればアプリストアまたはシステム更新で WebView を更新してください。</string>
     <string name="switch_site">サイト切替</string>
     <string name="current_site">現在のサイト：</string>
     <string name="confirm_switch_site">サイトを切り替えますか？</string>
