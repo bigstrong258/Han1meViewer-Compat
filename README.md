@@ -1,13 +1,24 @@
-# Han1meViewer for Huawei (HarmonyOS)
+# Han1meViewer Compat for Huawei / HarmonyOS
 
-本仓库是基于 [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer) 的 Huawei / HarmonyOS 特供版本，主要用于解决部分华为、荣耀设备在系统 WebView 版本较低时无法通过 Cloudflare 验证的问题。
+本仓库是基于已归档的 [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer) 最终版本维护的 Huawei / HarmonyOS 兼容分支，主要用于解决部分华为设备因系统 WebView 版本较低而无法通过 Cloudflare 验证的问题。
 
-当前正式版本：`v0.26.0-harmonyos-r1`
+当前正式版本：[v0.27.0-harmonyos-r1](https://github.com/bigstrong258/Han1meViewer-Compat/releases/tag/v0.27.0-harmonyos-r1)
 
-## Huawei 特供版说明
+## 下载与安装
 
-- 集成 [WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)，在 Huawei / HarmonyOS 设备上尝试挂载内置高版本 WebView 内核。
-- 内置精简后的 WebView 内核资产：`app/src/main/assets/com.google.android.webview.mp3`。
+- 正式版 APK：[Han1meViewer-v0.27.0-release+26072403.apk](https://github.com/bigstrong258/Han1meViewer-Compat/releases/download/v0.27.0-harmonyos-r1/Han1meViewer-v0.27.0-release%2B26072403.apk)
+- GitHub Releases 是本项目唯一的正式下载渠道；Pre-release 仅用于兼容性测试。
+- 从 `v0.27.0 Preview 1` 升级时可以直接覆盖安装。
+- `v0.26.0` 及更早版本使用旧签名，无法覆盖安装正式版。请先备份需要的数据，再卸载旧版；卸载会清除应用数据。
+- 新长期签名证书 SHA-256：`39798C23DEB3497BF7A8EDD042EF93803F921A7CDD354F5FC775008C467D5B4D`。
+
+## Huawei / HarmonyOS 兼容说明
+
+- 集成 [WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)，在 Huawei / HarmonyOS 设备上尝试为本应用挂载内置 WebView 内核，不会替换系统全局 WebView，也不会影响其他应用。
+- 当前内置 Chromium WebView 版本为 `146.0.7680.115`，资产位于 `app/src/main/assets/com.google.android.webview.mp3`。
+- 内置内核仅在设备品牌/制造商识别为 Huawei、Android 10（API 29）及以上且支持 ARM64 时自动启用。
+- 非 Huawei、Samsung 或不满足上述条件的设备继续使用系统 WebView，不会被禁止使用本应用；若版本过低，登录或 Cloudflare 验证仍可能失败。
+- 不对所有品牌自动注入内置内核，因为不同 ROM 的 WebView provider 签名策略不同，强制替换可能导致冷启动崩溃。
 - 更新源、公告源、反馈入口已指向本 fork。
 - 已移除上游签名一致性检查，支持本 fork 独立构建与发布。
 - release 构建已加入 WebViewUpgrade 相关 ProGuard / R8 keep 规则，避免混淆导致内核替换失效。
@@ -16,12 +27,12 @@
 
 由于 Android 系统在单个进程生命周期内只会初始化一次 WebView，首次准备内置 WebView 后，通常需要手动清理后台并重新打开应用：
 
-1. 首次进入 Cloudflare 验证页时，应用会尝试准备内置 WebView。
+1. 首次进入登录页或 Cloudflare 验证页时，符合条件的 Huawei 设备会尝试准备内置 WebView。
 2. 如果看到“正在更新 WebView，完成后请手动清理后台并重新打开应用”之类提示，请等待数秒后从最近任务中清理应用后台。
 3. 重新打开应用后，再次进入验证页，此时内置高版本 WebView 通常会生效。
 4. 第二次进入后，若高版本内核已挂载成功，将不再提示重新打开应用。
 
-非 Huawei / Honor 设备建议优先通过系统或应用商店更新 WebView。Samsung 设备目前不建议使用本项目的 WebViewUpgrade 方案。
+其他设备会直接继续使用系统 WebView。如无法更新系统 WebView，仍可尝试使用本应用；只有实际遇到登录或 Cloudflare 验证失败时，才需要进一步处理。
 
 ## 反馈渠道
 
@@ -35,14 +46,15 @@
 
 - 手机型号，例如 `HUAWEI LRA-AL00`
 - Android / HarmonyOS 版本
+- 系统 WebView 版本
 - Han1meViewer 版本号
-- 是否覆盖安装
+- 是从旧签名版本全新安装，还是从 `v0.27.0 Preview 1` 覆盖安装
 - 异常发生前正在进行的操作
 - 如果方便，请附截图、录屏或 logcat
 
 ## 与上游的关系
 
-本项目会尽量跟随上游更新，但 Huawei / HarmonyOS 相关 WebViewUpgrade 逻辑属于本 fork 的额外适配。若你的设备可以通过正常渠道更新系统 WebView，并且使用上游项目没有 Cloudflare 问题，建议优先使用上游原项目。
+上游仓库已于 2026 年 7 月归档。本项目已经合并其归档前截至 `v1.0.0-release+26071512` 的最终 Compose 更新，并在此基础上继续维护 Firebase、发布流程和 Huawei / HarmonyOS WebView 兼容逻辑。由于上游不再更新，后续修复和兼容性反馈请直接提交到本仓库。
 
 ---
 
@@ -103,7 +115,7 @@ Han1meViewer 是一个使用 Kotlin 开发的 Android 客户端，用于浏览�
 
 若 `https://hanime1.me/` 认为本应用行为不当，可通过 GitHub 仓库内置功能联系维护者。
 
-🔄 最后更新日期：`2026-05-23`
+🔄 最后更新日期：`2026-07-24`
 
 ℹ️ 建议通过官方渠道支持原站内容，并点击广告以支持网站运营者。
 
@@ -132,7 +144,7 @@ Telegram 群组：[https://t.me/Han1meViewer](https://t.me/Han1meViewer)
 
 公告系统分为两部分：
 
-- 用户侧：应用启动后由 `MainViewModel.loadAnnouncements()` 从 Firebase Realtime Database 读取 `announcements` 节点，首页会展示有效公告，并可点开公告详情弹窗。
+- 用户侧：首页加载时由 `HomePageViewModel` 从 Firebase Realtime Database 读取 `announcements` 节点，展示有效公告，并可点开公告详情弹窗。
 - 维护侧：默认由项目维护者在 Firebase 控制台维护 `announcements` 节点；仓库内的 `HanimeAnnouncementManagerWebUI` 作为可选管理方式保留。
 
 `HanimeAnnouncementManagerWebUI` 目录包含两个文件：
@@ -144,7 +156,7 @@ Telegram 群组：[https://t.me/Han1meViewer](https://t.me/Han1meViewer)
 
 - 应用必须能够正常访问网络。
 - 项目中配置的 Firebase Realtime Database 地址必须可用。
-- `announcements` 节点下的公告数据结构需要和 `Announcement` 模型一致，至少包含 `title`、`content`、`isActive` 等字段。
+- `announcements` 节点下必须先建立公告 ID，再在该 ID 下填写与 `Announcement` 模型一致的字段；不能把 `title`、`content` 等字段直接放在 `announcements` 下。
 - 公告内容会按 `priority` 排序，只有 `isActive = true` 的公告才会显示。
 - Realtime Database 建议仅允许客户端公开读取 `announcements`，禁止所有客户端写入；维护者通过 Firebase 控制台直接修改数据。
 - 仅当使用可选 WebUI 管理公告时，才需要启用 Firebase Authentication、准备管理员账号和 Web 配置。
@@ -173,7 +185,18 @@ Telegram 群组：[https://t.me/Han1meViewer](https://t.me/Han1meViewer)
 通过 Firebase 控制台维护公告：
 
 1. 打开 Realtime Database 的 `announcements` 节点。
-2. 按下方字段结构新增、编辑、启用、停用或删除公告。
+2. 为每条公告建立唯一子节点，例如 `v0_27_0_harmonyos_r1`。
+3. 在该子节点下按下方字段结构新增、编辑、启用、停用或删除公告。
+
+```text
+announcements
+└─ v0_27_0_harmonyos_r1
+   ├─ title
+   ├─ content
+   ├─ timestamp
+   ├─ priority
+   └─ isActive
+```
 
 如需使用可选 WebUI：
 
@@ -198,7 +221,7 @@ Telegram 群组：[https://t.me/Han1meViewer](https://t.me/Han1meViewer)
 
 - 新公告建议先在 WebUI 中预览，再切换为 `isActive = true`。
 - 过期或不再需要显示的公告应直接下线，而不是删除，以便回溯。
-- 重要公告优先级数值应更高或更低需与 WebUI 约定保持一致，避免排序混乱。
+- 公告按 `priority` 从小到大排序，数值越小越靠前。
 
 ## 📷 截图预览
 
@@ -228,7 +251,7 @@ Telegram 群组：[https://t.me/Han1meViewer](https://t.me/Han1meViewer)
 - `logic.network`：Retrofit Service、OkHttp 拦截器、DNS、CookieJar、更新服务和网络入口。
 - `logic.model`：页面和网络解析后的领域模型，如 `HanimeVideo`、`HanimeInfo`、`HomePage`、`Playlists` 等。
 - `logic.dao` / `logic.entity`：Room 数据库、DAO 和实体，用于历史、下载、搜索历史、关键帧、打卡等本地数据。
-- `announcement` 链路：公告数据从 Firebase Realtime Database 的 `announcements` 节点读取，首页通过 `MainViewModel.loadAnnouncements()` 拉取并展示，管理端使用 `HanimeAnnouncementManagerWebUI` 维护公告内容。
+- `announcement` 链路：公告数据从 Firebase Realtime Database 的 `announcements` 节点读取，首页通过 `HomePageViewModel` 拉取并展示；格式错误的公告会被记录并跳过，管理端可使用 Firebase 控制台或 `HanimeAnnouncementManagerWebUI` 维护公告内容。
 - `worker`：WorkManager 下载任务和更新任务。
 - `util`：主题、网络、文件、权限、Cookie、Toast、视频和通用工具方法。
 
@@ -316,6 +339,7 @@ DownloadScreen -> DownloadViewModel -> HanimeDownloadManagerV2 -> WorkManager Wo
 
 🔏 Release 构建需要本地或 CI 提供签名相关环境变量：
 
+- `KEYSTORE_FILE`
 - `KEYSTORE_PASSWORD`
 - `KEY_ALIAS`
 
@@ -354,6 +378,13 @@ Han1meViewer/
 - 修改网络列表、分页或 Compose `Lazy*` 列表时，请检查重复 key 风险。
 - 修改播放、下载、账号、Cookie、Cloudflare、更新逻辑时，请尽量说明验证方式。
 - 提交共享关键 H 帧可参考 `.github/PULL_REQUEST_TEMPLATE/submit_h_keyframe.md`。
+
+### 维护与致谢
+
+- [YenalyLiew/Han1meViewer](https://github.com/YenalyLiew/Han1meViewer)：原始项目与 Apache 2.0 授权来源。
+- [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer)：本兼容分支所同步的最终 Compose 上游。
+- [JonaNorman/WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)：应用内 WebView 内核升级方案。
+- **OpenAI Codex**：协助完成上游合并、Firebase 与签名 CI 恢复、构建及崩溃诊断、正式发布和文档维护。Codex 是 AI 开发工具，不代表真人维护者或独立 GitHub 账号。
 
 ## 🧩 TODO
 

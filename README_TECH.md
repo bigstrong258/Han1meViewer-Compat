@@ -95,7 +95,7 @@ ViewModel 是页面状态和业务动作的入口。
 
 典型文件：
 
-- `ui/viewmodel/MainViewModel.kt`
+- `ui/screen/home/homepage/HomePageViewModel.kt`
 - `ui/viewmodel/SearchViewModel.kt`
 - `ui/viewmodel/VideoViewModel.kt`
 - `ui/viewmodel/CommentViewModel.kt`
@@ -387,6 +387,7 @@ Room 主要用于：
 - `ui/activity/LoginActivity.kt`
 - `ui/activity/ManualInputCookiesActivity.kt`
 - `ui/activity/CloudflareActivity.kt`
+- `util/WebViewUpgradeUtil.java`
 - `ui/screen/account/AccountScreen.kt`
 - `ui/screen/account/AvatarCropScreen.kt`
 - `ui/viewmodel/UserAccountViewModel.kt`
@@ -396,6 +397,9 @@ Room 主要用于：
 - 登录态和 Cookie 由 `Preferences`、`HCookieJar` 和相关工具共同维护。
 - 手动 Cookie 输入用于绕过无法自动登录或 WebView 登录失败的情况。
 - Cloudflare 页面和拦截器用于处理访问保护导致的请求失败。
+- Huawei 设备仅在 Android 10（API 29）及以上且支持 ARM64 时，由 `WebViewUpgradeUtil` 在首次创建 WebView 前尝试加载内置 WebView 146。
+- 非 Huawei、Samsung 或不满足条件的设备不执行内置内核替换，继续使用系统 WebView。
+- WebView provider 不能在同一进程中热切换；首次准备内置内核后通常需要彻底退出并冷启动。
 - 账号信息修改、密码修改、头像上传都通过 `HanimeMyListService` 和 `NetworkRepo` 包装。
 
 ## 13. 公告系统与管理端
@@ -404,17 +408,19 @@ Room 主要用于：
 
 关键文件：
 
-- `ui/viewmodel/MainViewModel.kt`
-- `ui/component/AnnouncementDialog.kt`
-- `ui/screen/home/HomePageScreen.kt`
+- `ui/screen/home/homepage/HomePageViewModel.kt`
+- `ui/screen/home/homepage/component/AnnouncementDialog.kt`
+- `ui/screen/home/homepage/HomePageScreen.kt`
 - `logic/model/Announcement.kt`
 - `HanimeAnnouncementManagerWebUI/HanimeAnnouncementManager.html`
 - `HanimeAnnouncementManagerWebUI/PermitAdmin.py`
 
 应用侧链路：
 
-- `MainViewModel.loadAnnouncements()` 从 Firebase Realtime Database 的 `announcements` 节点读取公告。
+- `HomePageViewModel.fetchAnnouncementsFromFirebase()` 从 Firebase Realtime Database 的 `announcements` 节点读取公告。
+- `announcements` 下的每个直接子节点必须是一条完整公告，例如 `announcements/v0_27_0_harmonyos_r1`；不能直接放置 `title`、`content` 等字段。
 - 只有 `isActive = true` 的公告会参与展示。
+- 公告按 `priority` 从小到大排序，单条数据无法反序列化时会记录错误并跳过，不再导致应用进程崩溃。
 - 首页通过公告卡片展示公告列表。
 - 点击公告后进入 `AnnouncementDialog`，可查看标题、正文、时间、图片和按钮文案。
 - 用户关闭公告后，会记录 `last_dismiss_time`，24 小时内不会再次自动弹出。
@@ -441,7 +447,7 @@ Room 主要用于：
 - `imageUrl`：公告图片地址，可选。
 - `positiveText`：确认按钮文本，可选。
 - `negativeText`：取消按钮文本，可选。
-- `priority`：排序优先级。
+- `priority`：排序优先级，数值越小越靠前。
 - `timestamp`：更新时间戳，单位为秒。
 - `isActive`：是否启用。
 
@@ -595,8 +601,8 @@ entities
 
 新增首页模块：
 
-- `HomePageScreen.kt`
-- `MainViewModel.kt`
+- `ui/screen/home/homepage/HomePageScreen.kt`
+- `ui/screen/home/homepage/HomePageViewModel.kt`
 - `Parser.homePageVer2`
 - `HomePage` 相关 model
 
