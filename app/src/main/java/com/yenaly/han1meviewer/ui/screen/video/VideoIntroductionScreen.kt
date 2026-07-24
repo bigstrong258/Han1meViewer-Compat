@@ -1,5 +1,7 @@
 package com.yenaly.han1meviewer.ui.screen.video
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -29,8 +31,18 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.ThumbDown
+import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -38,6 +50,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -56,6 +69,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -81,9 +95,11 @@ import com.yenaly.han1meviewer.ui.component.lazy.LazyRow
 import com.yenaly.han1meviewer.ui.preview.ComponentPreview
 import com.yenaly.han1meviewer.ui.preview.fakeVideoIntroduction
 import com.yenaly.han1meviewer.ui.screen.rememberCardResponsiveWidth
+import com.yenaly.han1meviewer.ui.screen.rememberRandomLoadingHint
 import com.yenaly.han1meviewer.ui.theme.SpacingNormal
 import com.yenaly.han1meviewer.ui.theme.VideoNormalCardMinWidth
 import com.yenaly.han1meviewer.ui.theme.VideoSimplifiedCardMinWidth
+import com.yenaly.han1meviewer.util.DisplayTextLocalizer
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
@@ -112,6 +128,7 @@ fun VideoIntroductionScreen(
     onNavigateToSearch: (String) -> Unit,
     onToggleSubscribe: (HanimeVideo.Artist) -> Unit,
     onToggleFavorite: () -> Unit,
+    onRateVideo: (Boolean) -> Unit,
     onManageMyList: (List<String>, List<Boolean>) -> Unit,
     onQuickCheckIn: (CheckInRecordEntity) -> Unit,
     onPrepareDownload: (String) -> Unit,
@@ -137,6 +154,7 @@ fun VideoIntroductionScreen(
             .widthIn(max = maxScreenWidth)
     ) {
         val currentVideo = video ?: (state as? VideoLoadingState.Success)?.info
+        val loadingHint = rememberRandomLoadingHint()
         when {
             currentVideo != null -> VideoIntroductionContent(
                 video = currentVideo,
@@ -152,6 +170,7 @@ fun VideoIntroductionScreen(
                 onNavigateToSearch = onNavigateToSearch,
                 onToggleSubscribe = onToggleSubscribe,
                 onToggleFavorite = onToggleFavorite,
+                onRateVideo = onRateVideo,
                 onManageMyList = onManageMyList,
                 onQuickCheckIn = onQuickCheckIn,
                 onPrepareDownload = onPrepareDownload,
@@ -183,7 +202,7 @@ fun VideoIntroductionScreen(
 
             else -> LoadingContent(
                 modifier = Modifier.align(Alignment.Center),
-                message = stringResource(R.string.loading),
+                message = loadingHint,
             )
         }
     }
@@ -205,6 +224,7 @@ private fun VideoIntroductionContent(
     onNavigateToSearch: (String) -> Unit,
     onToggleSubscribe: (HanimeVideo.Artist) -> Unit,
     onToggleFavorite: () -> Unit,
+    onRateVideo: (Boolean) -> Unit,
     onManageMyList: (List<String>, List<Boolean>) -> Unit,
     onQuickCheckIn: (CheckInRecordEntity) -> Unit,
     onPrepareDownload: (String) -> Unit,
@@ -342,7 +362,11 @@ private fun VideoIntroductionContent(
         }
 
         item(key = "meta") {
-            MetaSection(video = video, fromDownload = fromDownload)
+            MetaSection(
+                video = video,
+                fromDownload = fromDownload,
+                onRateVideo = onRateVideo,
+            )
         }
 
         item(key = "intro") {
@@ -656,6 +680,10 @@ private fun PlaylistBottomSheet(
     onDismiss: () -> Unit,
     onOpenVideo: (HanimeInfo) -> Unit,
 ) {
+    val playingIndex = remember(playlist) {
+        playlist.video.indexOfFirst { it.isPlaying }.coerceAtLeast(0)
+    }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         dragHandle = { BottomSheetHandler() },
@@ -691,7 +719,15 @@ private fun PlaylistBottomSheet(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            val listState = remember(playlist, playingIndex) {
+                LazyListState(firstVisibleItemIndex = playingIndex)
+            }
+            LaunchedEffect(playingIndex) {
+                listState.scrollToItem(playingIndex)
+            }
+
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -703,7 +739,7 @@ private fun PlaylistBottomSheet(
                             .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
                             .background(
                                 if (item.isPlaying) {
-                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f)
+                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.65f)
                                 } else {
                                     MaterialTheme.colorScheme.surface
                                 }
@@ -808,14 +844,24 @@ private fun ArtistSection(
                 )
             }
             artist.post?.let {
-                Button(onClick = onToggleSubscribe) {
-                    Text(
-                        text = if (artist.isSubscribed) {
-                            stringResource(R.string.subscribed)
-                        } else {
-                            stringResource(R.string.subscribe)
-                        }
-                    )
+                if (artist.isSubscribed) {
+                    OutlinedButton(
+                        onClick = onToggleSubscribe,
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+                    ) {
+                        Text(text = stringResource(R.string.subscribed))
+                    }
+                } else {
+                    Button(onClick = onToggleSubscribe) {
+                        Text(text = stringResource(R.string.subscribe))
+                    }
                 }
             }
         }
@@ -829,59 +875,192 @@ private fun TitleSection(video: HanimeVideo, onCopyText: (String) -> Unit) {
     val secondaryTitle = video.title.takeIf { it != primaryTitle }
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(
-            text = primaryTitle,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.combinedClickable(
-                onClick = {},
-                onLongClick = { onCopyText(primaryTitle) },
-            )
-        )
-        secondaryTitle?.let {
+        SelectionContainer {
             Text(
-                text = it,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = primaryTitle,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.combinedClickable(
                     onClick = {},
-                    onLongClick = { onCopyText(it) },
+                    onLongClick = { },
                 )
             )
+        }
+
+        secondaryTitle?.let {
+            SelectionContainer {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.combinedClickable(
+                        onClick = {},
+                        onLongClick = { },
+                    )
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun MetaSection(video: HanimeVideo, fromDownload: Boolean) {
+private fun MetaSection(
+    video: HanimeVideo,
+    fromDownload: Boolean,
+    onRateVideo: (Boolean) -> Unit,
+) {
     val viewsText = if (fromDownload) {
         stringResource(R.string.s_view_times, "0721")
     } else {
-        stringResource(R.string.s_view_times, video.views.toString())
+        DisplayTextLocalizer.localizeViews(video.views.toString())
     }
     val uploadTime = video.uploadTime?.format(previewSafeDateFormat).orEmpty()
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
+        if (!fromDownload && video.ratingCount != null) {
+            VideoRatingButtons(
+                video = video,
+                onRateVideo = onRateVideo,
+            )
+        }
+        MetaInfoItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Rounded.PlayArrow,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                )
+            },
             text = viewsText,
+        )
+
+        MetaInfoItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Rounded.Schedule,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                )
+            },
+            text = uploadTime,
+        )
+    }
+}
+
+@Composable
+private fun MetaInfoItem(
+    icon: @Composable () -> Unit,
+    text: String,
+) {
+    Row(
+        modifier = Modifier.height(32.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        icon()
+        Text(
+            text = text,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+    }
+}
+
+@Composable
+private fun VideoRatingButtons(
+    video: HanimeVideo,
+    onRateVideo: (Boolean) -> Unit,
+) {
+    val likeContentColor by animateColorAsState(
+        targetValue = if (video.isFav) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+        label = "LikeColor"
+    )
+    val likeContainerColor by animateColorAsState(
+        targetValue = if (video.isFav) {
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.72f)
+        },
+        label = "LikeContainer"
+    )
+
+    val dislikeContentColor by animateColorAsState(
+        targetValue = if (video.isUnlike) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        label = "DislikeColor"
+    )
+    val dislikeContainerColor by animateColorAsState(
+        targetValue = if (video.isUnlike) {
+            MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.72f)
+        },
+        label = "DislikeContainer"
+    )
+
+    Row(
+        modifier = Modifier
+            .height(32.dp)
+            .clip(RoundedCornerShape(16.dp)),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            modifier = Modifier
+                .height(32.dp)
+                .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp))
+                .background(likeContainerColor)
+                .combinedClickable(onClick = { onRateVideo(true) })
+                .padding(start = 10.dp, end = 8.dp, top = 6.dp, bottom = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector =
+                    if (video.isFav) Icons.Filled.ThumbUp
+                    else Icons.Outlined.ThumbUp,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = likeContentColor,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "${video.likeRatio ?: 0}% (${video.ratingCount ?: 0})",
+                style = MaterialTheme.typography.labelMedium,
+                color = likeContentColor,
+            )
+        }
+
         Box(
             modifier = Modifier
-                .size(width = 1.dp, height = 16.dp)
-                .background(MaterialTheme.colorScheme.primary)
+                .width(1.dp)
+                .height(32.dp)
+                .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         )
-        Text(
-            text = uploadTime,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+
+        Box(
+            modifier = Modifier
+                .size(width = 34.dp, height = 32.dp)
+                .clip(RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
+                .background(dislikeContainerColor)
+                .combinedClickable(onClick = { onRateVideo(false) }),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector =
+                    if (video.isUnlike) Icons.Filled.ThumbDown
+                    else Icons.Outlined.ThumbDown,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = dislikeContentColor
+            )
+        }
     }
 }
 
@@ -1071,12 +1250,14 @@ internal fun RelatedVideosSection(
     onOpenVideo: (HanimeInfo) -> Unit,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(SpacingNormal),) {
+        verticalArrangement = Arrangement.spacedBy(SpacingNormal),
+    ) {
         SectionHeader(title = stringResource(R.string.related_video))
 
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
             val isNormal = videos.firstOrNull()?.itemType == HanimeInfo.NORMAL
-            val minCardWidth = if (isNormal) VideoNormalCardMinWidth else VideoSimplifiedCardMinWidth
+            val minCardWidth =
+                if (isNormal) VideoNormalCardMinWidth else VideoSimplifiedCardMinWidth
             val spacing = SpacingNormal
             val columns = maxOf(2, ((maxWidth + spacing) / (minCardWidth + spacing)).toInt())
             val itemWidth = ((maxWidth - (spacing * (columns - 1))) / columns) - 0.5.dp
@@ -1159,6 +1340,7 @@ private fun VideoIntroductionScreenPreview() {
             onNavigateToSearch = {},
             onToggleSubscribe = {},
             onToggleFavorite = {},
+            onRateVideo = {},
             onManageMyList = { _, _ -> },
             onQuickCheckIn = {},
             onPrepareDownload = {},
@@ -1199,6 +1381,7 @@ private fun VideoIntroductionScreenLoadingPreview() {
             onNavigateToSearch = {},
             onToggleSubscribe = {},
             onToggleFavorite = {},
+            onRateVideo = {},
             onManageMyList = { _, _ -> },
             onQuickCheckIn = {},
             onPrepareDownload = {},
@@ -1239,6 +1422,7 @@ private fun VideoIntroductionScreenErrorPreview() {
             onNavigateToSearch = {},
             onToggleSubscribe = {},
             onToggleFavorite = {},
+            onRateVideo = {},
             onManageMyList = { _, _ -> },
             onQuickCheckIn = {},
             onPrepareDownload = {},

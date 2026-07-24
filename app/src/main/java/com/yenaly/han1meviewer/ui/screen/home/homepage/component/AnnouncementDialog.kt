@@ -1,12 +1,5 @@
-package com.yenaly.han1meviewer.ui.screen.home.homepage
+package com.yenaly.han1meviewer.ui.screen.home.homepage.component
 
-import android.content.ContentValues
-import android.content.Context
-import android.graphics.Bitmap
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,22 +39,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import coil3.SingletonImageLoader
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import coil3.request.SuccessResult
 import coil3.request.crossfade
-import coil3.toBitmap
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.model.Announcement
 import com.yenaly.han1meviewer.ui.component.ConfirmDialog
 import com.yenaly.han1meviewer.ui.preview.ComponentPreview
 import com.yenaly.han1meviewer.ui.preview.fakeAnnouncements
+import com.yenaly.han1meviewer.ui.screen.home.homepage.saveImageToGallery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -207,38 +195,6 @@ fun AnnouncementDialog(
             },
             onDismiss = { showSaveImageConfirm = false },
         )
-    }
-}
-
-private suspend fun saveImageToGallery(context: Context, imageUrl: String) {
-    val loader = SingletonImageLoader.get(context)
-    val request = ImageRequest.Builder(context)
-        .data(imageUrl)
-        .build()
-    val result = (loader.execute(request) as? SuccessResult)?.image
-    val bitmap = result?.toBitmap() ?: return
-    val filename = "IMG_${System.currentTimeMillis()}.jpg"
-    val fos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        val values = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-        }
-        val uri =
-            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-        uri?.let { context.contentResolver.openOutputStream(it) }
-    } else {
-        val file = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-            filename
-        )
-        withContext(Dispatchers.IO) {
-            FileOutputStream(file)
-        }
-    }
-    fos?.use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }
-    withContext(Dispatchers.Main) {
-        Toast.makeText(context, context.getString(R.string.saved), Toast.LENGTH_SHORT).show()
     }
 }
 

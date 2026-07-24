@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
  * 渲染委托给 [com.yenaly.han1meviewer.ui.screen.home.preview.PreviewContent]。
  *
  * @param onBack 返回回调
+ * @param onNavigateToGetchuPreview 打开 Getchu 新番预告页回调
  * @param onNavigateToPreviewComment 打开预览评论页回调
  * @param onNavigateToVideo 打开视频详情回调
  * @param previewViewModel 预览 ViewModel
@@ -57,6 +58,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PreviewScreen(
     onBack: () -> Unit,
+    onNavigateToGetchuPreview: () -> Unit,
     onNavigateToPreviewComment: (String, String) -> Unit,
     onNavigateToVideo: (String) -> Unit,
     previewViewModel: PreviewViewModel,
@@ -203,6 +205,7 @@ fun PreviewScreen(
             }
             PreviewEvent.OnDismissImageViewer -> { imageViewerState = null }
             is PreviewEvent.OnOpenVideo -> event.videoCode?.let(onNavigateToVideo)
+            PreviewEvent.OnOpenGetchuPreview -> onNavigateToGetchuPreview()
             is PreviewEvent.OnOpenComment -> onNavigateToPreviewComment(event.label, event.dateCode)
             PreviewEvent.OnRetryLoad -> {
                 val code = uiState.routeState.currentDateCode

@@ -15,6 +15,7 @@ import com.norman.webviewup.lib.source.UpgradeSource;
 import com.yenaly.han1meviewer.R;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class WebViewUpgradeUtil {
 
     private static final String TAG = "WebViewUpgradeUtil";
-    private static final String UPGRADE_PACKAGE_KEY = "x86";
+    private static final String UPGRADE_PACKAGE_KEY = "arm64-v8a";
 
     private static final Map<String, List<UpgradeInfo>> UPGRADE_PACKAGE_MAP = new HashMap<>();
 
@@ -44,6 +45,11 @@ public class WebViewUpgradeUtil {
         }
 
         if (!isHuaweiDevice()) {
+            Toast.makeText(appContext, R.string.webview_upgrade_other_brand_hint, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (!supportsBundledWebView()) {
             Toast.makeText(appContext, R.string.webview_upgrade_other_brand_hint, Toast.LENGTH_LONG).show();
             return;
         }
@@ -91,6 +97,11 @@ public class WebViewUpgradeUtil {
     private static boolean isSamsungDevice() {
         return containsIgnoreCase(Build.MANUFACTURER, "samsung")
                 || containsIgnoreCase(Build.BRAND, "samsung");
+    }
+
+    private static boolean supportsBundledWebView() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                && Arrays.asList(Build.SUPPORTED_ABIS).contains("arm64-v8a");
     }
 
     private static boolean containsIgnoreCase(String value, String keyword) {

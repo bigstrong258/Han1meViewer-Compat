@@ -35,6 +35,7 @@ fun ErrorContent(
     title: String? = null,
     message: String? = null,
     onRetry: (() -> Unit)? = null,
+    retryText: String = stringResource(R.string.retry),
 ) {
     val resolvedTitle = title ?: stringResource(R.string.load_failed_retry)
     Column(
@@ -62,7 +63,7 @@ fun ErrorContent(
         }
         if (onRetry != null) {
             Button(onClick = onRetry) {
-                Text(stringResource(R.string.retry))
+                Text(retryText)
             }
         }
     }

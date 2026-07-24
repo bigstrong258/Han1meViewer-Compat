@@ -60,7 +60,9 @@ fun getHanimeSearchShareText(artist: String): String = buildString {
 fun getHanimeVideoDownloadLink(videoCode: String) =
     HANIME_BASE_URL + "download?v=" + videoCode
 
-val videoUrlRegex = Regex("""(?:hanime(?:1|one)|javchu)\.(?:com|me)/watch\?v=(\d+)""")
+val videoUrlRegex = Regex(
+    """(?:(?:https?:)?//[^\s"'<>/]+|(?:hanime(?:1|one)|javchu)\.(?:com|me))?(?:/[^/?#\s"'<>]+)*/watch\?(?:[^#\s"'<>]*&)?v=(\d+)"""
+)
 
 fun String.toVideoCode() = videoUrlRegex.find(this)?.groupValues?.get(1)
 

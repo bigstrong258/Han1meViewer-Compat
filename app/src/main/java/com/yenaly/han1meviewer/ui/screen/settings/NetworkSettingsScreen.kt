@@ -8,12 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,6 +46,9 @@ data class NetworkSettingsUiState(
     val domainDisplay: String,
     val proxySummary: String,
     val useBuiltInHosts: Boolean,
+    val useCustomMirrorSite: Boolean,
+    val customMirrorSite: String,
+    val appendCustomMirrorPath: Boolean,
     val useDoH: Boolean,
     val dohSummary: String,
     val delaySummary: String,
@@ -82,10 +90,19 @@ fun NetworkSettingsScreen(
     dohTimeoutSeconds: Int,
     dohTestResults: List<DohTestResultUi>,
     isDohTesting: Boolean,
+    useCustomMirrorSite: Boolean,
+    customMirrorSite: String,
+    appendCustomMirrorPath: Boolean,
+    customMirrorTestResult: String?,
+    isCustomMirrorTesting: Boolean,
     onDomainChange: (String) -> Unit,
+    onSaveCustomMirrorSite: (Boolean, String, Boolean) -> Unit,
+    onTestCustomMirrorSite: (String, Boolean) -> Unit,
     onUseBuiltInHostsChange: (Boolean) -> Unit,
+    onSaveCustomHosts: (String) -> Unit,
     onSaveDohSettings: (Boolean, String, String, String, Int) -> Unit,
     onOpenDelayTest: () -> Unit,
+    customHostsData: String,
     onOpenDohTest: () -> Unit,
     onDismissDelayTest: () -> Unit,
     onDismissDohTest: () -> Unit,
@@ -94,6 +111,8 @@ fun NetworkSettingsScreen(
     var showDomainDialog by rememberSaveable { mutableStateOf(false) }
     var showProxyDialog by rememberSaveable { mutableStateOf(false) }
     var showDohDialog by rememberSaveable { mutableStateOf(false) }
+    var showCustomHostsDialog by rememberSaveable { mutableStateOf(false) }
+    var showCustomMirrorSiteDialog by rememberSaveable { mutableStateOf(false) }
 
     if (showDomainDialog) {
         NetworkChoiceDialog(
@@ -136,6 +155,33 @@ fun NetworkSettingsScreen(
         )
     }
 
+    if (showCustomHostsDialog) {
+        CustomHostsDialog(
+            currentData = customHostsData,
+            onDismiss = { showCustomHostsDialog = false },
+            onConfirm = { data ->
+                showCustomHostsDialog = false
+                onSaveCustomHosts(data)
+            },
+        )
+    }
+
+    if (showCustomMirrorSiteDialog) {
+        CustomMirrorSiteDialog(
+            enabled = useCustomMirrorSite,
+            currentUrl = customMirrorSite,
+            appendPath = appendCustomMirrorPath,
+            testResult = customMirrorTestResult,
+            isTesting = isCustomMirrorTesting,
+            onDismiss = { showCustomMirrorSiteDialog = false },
+            onConfirm = { enabled, url, appendPath ->
+                showCustomMirrorSiteDialog = false
+                onSaveCustomMirrorSite(enabled, url, appendPath)
+            },
+            onTest = onTestCustomMirrorSite,
+        )
+    }
+
     if (isDelayTesting) {
         DelayTestDialog(
             currentHost = currentHost,
@@ -168,6 +214,15 @@ fun NetworkSettingsScreen(
 
         item {
             SettingNavigationItem(
+                title = stringResource(R.string.custom_mirror_site),
+                summary = if (useCustomMirrorSite && customMirrorSite.isNotBlank()) customMirrorSite else stringResource(R.string.custom_mirror_site_hint),
+                iconRes = R.drawable.baseline_domain_24,
+                onClick = { showCustomMirrorSiteDialog = true },
+            )
+        }
+
+        item {
+            SettingNavigationItem(
                 title = stringResource(R.string.proxy),
                 summary = state.proxySummary,
                 iconRes = R.drawable.baseline_vpn_24,
@@ -189,12 +244,23 @@ fun NetworkSettingsScreen(
 
         item {
             SettingNavigationItem(
+                title = stringResource(R.string.custom_hosts),
+                summary = if (customHostsData.isBlank()) stringResource(R.string.custom_hosts_empty_summary) else customHostsData.take(60),
+                iconRes = R.drawable.baseline_edit_24,
+                onClick = { showCustomHostsDialog = true },
+            )
+        }
+
+        item {
+            SettingNavigationItem(
                 title = stringResource(R.string.use_doh),
                 summary = state.dohSummary,
                 iconRes = R.drawable.baseline_doh_24,
                 onClick = { showDohDialog = true },
             )
         }
+
+        item { NetworkGroupTitle(stringResource(R.string.debug)) }
 
         item {
             SettingNavigationItem(
@@ -529,6 +595,171 @@ private fun DohDialog(
 }
 
 @Composable
+private fun CustomHostsDialog(
+    currentData: String,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit,
+) {
+    var text by rememberSaveable(currentData) { mutableStateOf(currentData) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.custom_hosts)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text(stringResource(R.string.host_or_ipv4)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    supportingText = { Text(stringResource(R.string.custom_hosts_format)) },
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(text.trim()) }) {
+                Text(stringResource(R.string.confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        },
+    )
+}
+
+@Composable
+private fun CustomMirrorSiteDialog(
+    enabled: Boolean,
+    currentUrl: String,
+    appendPath: Boolean,
+    testResult: String?,
+    isTesting: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: (Boolean, String, Boolean) -> Unit,
+    onTest: (String, Boolean) -> Unit,
+) {
+    var customEnabled by rememberSaveable(enabled) { mutableStateOf(enabled) }
+    var text by rememberSaveable(currentUrl) { mutableStateOf(currentUrl) }
+    var appendPathToApi by rememberSaveable(appendPath) { mutableStateOf(appendPath) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.custom_mirror_site)) },
+        text = {
+            Column(
+                modifier = Modifier
+                    .heightIn(max = 520.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(selected = customEnabled, onClick = { customEnabled = !customEnabled })
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Checkbox(checked = customEnabled, onCheckedChange = null)
+                    Text(stringResource(R.string.enable_custom_mirror_site))
+                }
+
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text(stringResource(R.string.custom_mirror_site)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    supportingText = { Text(stringResource(R.string.custom_mirror_site_hint)) },
+                )
+
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = stringResource(R.string.custom_mirror_api_path_mode),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    CustomMirrorPathModeOption(
+                        selected = appendPathToApi,
+                        title = stringResource(R.string.custom_mirror_api_path_follow_home),
+                        summary = stringResource(R.string.custom_mirror_api_path_follow_home_summary),
+                        onClick = { appendPathToApi = true },
+                    )
+                    CustomMirrorPathModeOption(
+                        selected = !appendPathToApi,
+                        title = stringResource(R.string.custom_mirror_api_path_root),
+                        summary = stringResource(R.string.custom_mirror_api_path_root_summary),
+                        onClick = { appendPathToApi = false },
+                    )
+                }
+
+                Button(
+                    enabled = text.isNotBlank() && !isTesting,
+                    onClick = { onTest(text.trim(), appendPathToApi) },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.test_connection))
+                }
+
+                if (isTesting) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
+
+                testResult?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(customEnabled, text.trim(), appendPathToApi) }) {
+                Text(stringResource(R.string.confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        },
+    )
+}
+
+@Composable
+private fun CustomMirrorPathModeOption(
+    selected: Boolean,
+    title: String,
+    summary: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .selectable(selected = selected, onClick = onClick)
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        RadioButton(
+            selected = selected,
+            onClick = null
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(title)
+            Text(
+                text = summary,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
 private fun NetworkGroupTitle(title: String) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -551,6 +782,9 @@ private fun NetworkSettingsScreenPreview() {
                 domainDisplay = "hanime1.me (默认)",
                 proxySummary = "系统代理",
                 useBuiltInHosts = false,
+                useCustomMirrorSite = false,
+                customMirrorSite = "",
+                appendCustomMirrorPath = true,
                 useDoH = false,
                 dohSummary = "关闭",
                 delaySummary = "启用内建Hosts后可侦测延迟状况\n不启用为实际解析位址",
@@ -570,6 +804,11 @@ private fun NetworkSettingsScreenPreview() {
             ),
             isDelayTesting = false,
             isDohTesting = false,
+            useCustomMirrorSite = false,
+            customMirrorSite = "",
+            appendCustomMirrorPath = true,
+            customMirrorTestResult = null,
+            isCustomMirrorTesting = false,
             proxyType = HProxySelector.TYPE_SYSTEM,
             proxyIp = "",
             proxyPort = -1,
@@ -579,7 +818,11 @@ private fun NetworkSettingsScreenPreview() {
             dohBootstrapIps = "1.1.1.1, 8.8.8.8",
             dohTimeoutSeconds = 10,
             onDomainChange = {},
+            onSaveCustomMirrorSite = { _, _, _ -> },
+            onTestCustomMirrorSite = { _, _ -> },
             onUseBuiltInHostsChange = {},
+            onSaveCustomHosts = {},
+            customHostsData = "",
             onSaveDohSettings = { _, _, _, _, _ -> },
             onOpenDelayTest = {},
             onOpenDohTest = {},

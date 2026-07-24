@@ -111,6 +111,9 @@ sealed interface PreviewEvent {
     /** 打开视频详情 */
     data class OnOpenVideo(val videoCode: String?) : PreviewEvent
 
+    /** 打开 Getchu 新番预告 */
+    data object OnOpenGetchuPreview : PreviewEvent
+
     /** 打开评论页 */
     data class OnOpenComment(val label: String, val dateCode: String) : PreviewEvent
 

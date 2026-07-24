@@ -41,7 +41,17 @@
     <string name="hanime_list">新番列表</string>
     <string name="latest_hanime_list_monthly">%s 里番新番列表</string>
     <string name="preview_page_updating">站方正在更新新番预告页面，请尝试查看其他月份</string>
+    <string name="preview_page_updating_getchu_hint">站方正在更新新番预告页面，可先查看 Getchu 新番预告。Getchu 可能需要 VPN 才能正常访问。</string>
     <string name="latest_hanime_comment">%s 新番评论区</string>
+    <string name="view_getchu_preview">查看 Getchu 预告</string>
+    <string name="getchu_preview">Getchu 新番预告</string>
+    <string name="getchu_preview_title">Getchu %s 新番预告</string>
+    <string name="getchu_preview_detail">Getchu 新番详情</string>
+    <string name="getchu_sample_images">样品图</string>
+    <string name="getchu_series">系列商品</string>
+    <string name="getchu_product_intro">商品介绍</string>
+    <string name="getchu_story">故事</string>
+    <string name="getchu_staff">制作人员</string>
     <string name="my_list">我的清单</string>
     <string name="watch_later">稍后观看</string>
     <string name="fav_video">喜欢的影片</string>
@@ -150,6 +160,8 @@
     <string name="copy_">复制</string>
     <string name="h_keyframes_shared_by_other_detected">检测到他人分享的关键H帧</string>
     <string name="h_keyframes_shared_by_other_not_detected">未检测到他人分享的关键H帧</string>
+    <string name="h_keyframes_import_shared">导入分享的关键H帧</string>
+    <string name="h_keyframes_import_shared_hint">粘贴分享内容</string>
     <string name="share_to_others">分享给其他人</string>
     <string name="latest_release">最新上市</string>
     <string name="chinese_subtitle">中文字幕</string>
@@ -158,9 +170,33 @@
     <string name="start_all">全部开始</string>
     <string name="pause_all">全部暂停</string>
     <string name="domain_name">域名</string>
+    <string name="custom_mirror_site">自定义镜像站</string>
+    <string name="enable_custom_mirror_site">启用自定义镜像站</string>
+    <string name="custom_mirror_site_hint">请输入一个与主站结构相同、直达主页的自定义镜像站，格式为https://www.example.com、https://www.example.com/enter 或 https://www.example.com/enter/；主页会按输入原样请求</string>
+    <string name="custom_mirror_site_invalid">请输入有效且直达主页的 HTTPS 网址，格式为 https://www.example.com、https://www.example.com/enter 或 https://www.example.com/enter/</string>
+    <string name="custom_mirror_site_warning">自定义镜像站不一定可用，也可能与主站存在差异。
+
+部分镜像站可能无法登录、Cookie 无法共用、验证或评论等功能不可用，甚至可能存在安全风险。请确认你信任该站点后再继续。</string>
+    <string name="custom_mirror_api_path_mode">其他接口路径</string>
+    <string name="custom_mirror_api_path_follow_home">跟随主页目录</string>
+    <string name="custom_mirror_api_path_follow_home_summary">例如：https://www.example.com/enter/search</string>
+    <string name="custom_mirror_api_path_root">使用根域名</string>
+    <string name="custom_mirror_api_path_root_summary">例如：https://www.example.com/search。主页始终按上方输入原样请求</string>
+    <string name="test_connection">测试连接</string>
+    <string name="custom_mirror_site_testing">正在测试连接...</string>
+    <string name="custom_mirror_site_test_success">测试成功\n主页：%1$s\n其他接口测试：%2$ssearch</string>
+    <string name="custom_mirror_site_test_partial_success">主页测试成功，但其他接口测试失败\n主页：%1$s\n其他接口基址：%2$s\n原因：%3$s</string>
+    <string name="custom_mirror_site_test_failed">测试失败：%1$s</string>
+    <string name="custom_mirror_site_test_failed_http">测试失败：HTTP %1$d\n主页：%2$s</string>
+    <string name="custom_mirror_site_test_parse_failed">已连接，但主页结构解析失败\n主页：%1$s\n原因：%2$s</string>
+    <string name="custom_mirror_site_watch_test_failed">search 测试失败：%1$s</string>
+    <string name="custom_mirror_site_watch_test_failed_http">search 测试失败：HTTP %1$d\nURL：%2$s</string>
     <string name="use_built_in_hosts">应用内置 Hosts</string>
     <string name="network_settings">网络设置</string>
-    <string name="use_built_in_hosts_summary">应用提供的主机到 IP 的映射\nVPN？那是什么？</string>
+    <string name="use_built_in_hosts_summary">应用提供的主机到 IP 的映射\n若已设定自定义 Hosts，则优先使用\nVPN？那是什么？</string>
+    <string name="custom_hosts">自定义 Hosts</string>
+    <string name="custom_hosts_format">多个 IP 以逗号分隔，如 1.2.3.4,5.6.7.8</string>
+    <string name="custom_hosts_empty_summary">未设定（使用内置映射）</string>
     <string name="use_doh">使用 DoH</string>
     <string name="doh_settings">DoH 设置</string>
     <string name="doh_preset">DoH 预设</string>
@@ -331,8 +367,19 @@
     <string name="this_data_exists">该文件已存在！</string>
     <string name="download_failed_s_exists">下载失败：%1$s 已存在</string>
     <string name="download_task_failed">下载任务失败！</string>
-    <string name="download_task_failed_s">下载任务失败，请检查下载目录是否存在该文件！：%1$s</string>
+    <string name="download_task_failed_s">下载任务失败：%1$s</string>
     <string name="download_task_failed_s_reason_s">下载失败：%1$s\n原因为：%2$s</string>
+    <string name="download_task_retrying">下载暂时中断，正在重试</string>
+    <string name="download_task_retrying_s_reason_s">下载暂时中断：%1$s\n原因：%2$s\n稍后会自动继续。</string>
+    <string name="download_failed_tap_retry">下载失败，点按重试</string>
+    <string name="download_error_network">网络连接中断，请检查网络后稍等自动重试。</string>
+    <string name="download_error_timeout">连接超时，当前网络可能较慢，稍后会自动重试。</string>
+    <string name="download_error_dns">无法解析下载服务器地址，请检查网络或 DNS 设置。</string>
+    <string name="download_error_connect">无法连接到下载服务器，请切换网络或稍后重试。</string>
+    <string name="download_error_cancelled">下载已暂停。</string>
+    <string name="download_error_storage">无法写入下载文件，请检查存储空间、目录权限或重新选择下载目录。</string>
+    <string name="download_error_range_not_supported">服务器不支持从断点位置继续下载，请删除该任务后重新下载。</string>
+    <string name="download_error_file_info">无法获取文件大小或下载信息，请稍后重试。</string>
     <string name="custom">自定义</string>
     <string name="show_bottom_progress">显示底部进度条</string>
     <string name="default_playback_speed">默认播放速度</string>
@@ -380,6 +427,11 @@
     <string name="use_lock_screen_sum">开启后，进入应用时需验证屏幕锁，防止别人打开</string>
     <string name="not_compact_lock_screen">你的系统版本不支持验证锁屏，无法启用此功能</string>
     <string name="not_set_sys_lock">请先在系统设置中启用指纹、图案或PIN锁</string>
+    <string name="usage_notice_title">使用须知</string>
+    <string name="usage_notice_content">🧩 本应用为独立第三方工具，与 https://hanime1.me/ 及其关联方不存在隶属、合作、授权或代言关系。\n\n📢 请勿在任何公开平台宣传、搬运或引流本应用。若因此带来风险，维护者可能随时归档或隐藏仓库，并移除已编译发行版。\n\n🔍 本应用仅通过常规网络请求和 HTML DOM 解析获取目标网站公开显示的信息，不访问后端数据库，不进行注入攻击、授权绕过或获取非公开及隐私数据。\n\n⚖️ 本应用仅供技术研究、移动端体验优化与学习交流使用，不提供商业化服务。使用者应自行遵守所在地区法律法规和目标网站规则，并承担使用本应用产生的一切后果。\n\n©️ 原始视频、图文及相关内容版权归 https://hanime1.me/ 或原始制作、发行方所有。本应用不存储版权内容，不修改原始内容，也不声称拥有任何内容所有权。\n\n🛡️ 如对相关内容存在版权、DMCA、人身攻击或其他投诉，请直接联系源网站管理方处理。本应用开发者无法处理或协助处理相关内容纠纷。\n\nℹ️ 建议通过官方渠道支持原站内容与网站运营者。\n\n🔞 R18 警告：未满 18 岁禁止下载和使用本应用。\n\n2026 年 6 月 1 日</string>
+    <string name="usage_notice_accept">我已阅读并同意</string>
+    <string name="usage_notice_accept_countdown">请阅读 %1$d 秒</string>
+    <string name="usage_notice_decline">不同意并退出</string>
     <string name="app_lang">语言</string>
     <string name="app_lang_sum">选择应用语言</string>
     <string name="auth_request">请验证身份🥵</string>
@@ -539,7 +591,7 @@
     <string name="directory_saved">目录已保存:%s</string>
     <string name="no_directory_selected">未选择目录，未作变更</string>
     <string name="select_download_folder">选择您的下载文件夹</string>
-    <string name="select_folder_message">使用系统文件选择器指定一个文件夹：\n\n✓ 自主选择存储位置\n✓ 下载文件永久保存\n✓ 方便与其他应用共享\n✓ 卸载应用不影响文件下\n✗ 不支持断点续传\n\n建议选择Downloads下新建目录或自定义文件夹</string>
+    <string name="select_folder_message">使用系统文件选择器指定一个文件夹：\n\n✓ 自主选择存储位置\n✓ 下载文件永久保存\n✓ 方便与其他应用共享\n✓ 卸载应用不影响文件\n✓ 支持断点续传\n\n请勿移动、重命名或撤销该文件夹权限，否则需要重新选择目录。建议选择 Downloads 下的新建目录或自定义文件夹。</string>
     <string name="restore_default_path">恢复默认存储路径</string>
     <string name="restore_default_message">确定要恢复为应用内部存储吗？\n\n● 当前下载的文件不会被移动\n● 后续下载将保存到应用内部\n● 应用卸载后文件将被清除\n● 选择外部路径后，可以使用文件迁移功能移出</string>
     <string name="default_path_restored">已恢复默认存储路径</string>
@@ -586,7 +638,7 @@
     <string name="sort_most_likes">最多点赞</string>
     <string name="sort_most_dislikes">最多点踩</string>
     <string name="sort_comment">评论排序</string>
-    <string name="theme">主题</string>
+    <string name="theme">主题与外观</string>
     <string name="dark_theme">深色主题</string>
     <string name="dynamic_color_title">动态配色</string>
     <string name="dynamic_color_summary">开启后跟随系统主题色，仅支持Android 12以上</string>
@@ -713,8 +765,8 @@
     <string name="webview_upgrade_complete_restart">WebView 更新成功，请手动清理后台并重新打开应用</string>
     <string name="webview_upgrade_restart_required">WebView 已准备，请手动清理后台并重新打开应用</string>
     <string name="webview_upgrade_failed">WebView 更新失败</string>
-    <string name="webview_upgrade_other_brand_hint">可以通过应用商店更新 WebView，请尝试更新后使用原 HanimeViewer 项目；如果更新不了，再使用这个项目</string>
-    <string name="webview_upgrade_samsung_unsupported">三星手机不支持 JonaNorman/WebViewUpgrade，请通过应用商店或系统更新 WebView</string>
+    <string name="webview_upgrade_other_brand_hint">当前将继续使用系统 WebView。版本过低时验证可能失败；如有条件请通过应用商店或系统更新 WebView，无法更新也可以继续尝试使用本应用</string>
+    <string name="webview_upgrade_samsung_unsupported">三星设备不启用内置 WebView，将继续使用系统 WebView；如有条件请通过应用商店或系统更新 WebView</string>
     <string name="switch_site">切换站点</string>
     <string name="current_site">当前站点：</string>
     <string name="confirm_switch_site">确定要切换站点吗？</string>
@@ -762,6 +814,21 @@
         <item>解锁你的隐藏欲望</item>
         <item>脸红的关键词是什么？</item>
         <item>深夜好奇点什么…</item>
+        <item>嘘，这是属于我们两个人的秘密…</item>
+        <item>傲娇的你，其实很想搜那个吧？</item>
+        <item>把持住！这里的浓度有点高哦？</item>
+        <item>四海皆兄弟，老哥借一步说话？</item>
+        <item>你、你可别输入什么奇怪的词啊！</item>
+        <item>这里没有监控，偷偷搜吧~</item>
+        <item>夜深了，该满足一下好奇心了~</item>
+        <item>好东西，不打算和本萝莉/看板娘分享吗？</item>
+        <item>通往新世界的大门，输入密码开启！</item>
+        <item>听话，让我看看！</item>
+        <item>搜索框已经洗干净了，请享用！</item>
+        <item>你脑子里在想什么，搜索框都知道哦？</item>
+        <item>滴！学生卡/老司机卡，请刷卡搜索！</item>
+        <item>渴望着什么呢？悄悄告诉我嘛~</item>
+        <item>搜索一下，打开不可以色色的新世界！</item>
     </string-array>
     <string name="theme_color">主题色</string>
     <string name="theme_color_system">跟随系统</string>
@@ -806,4 +873,25 @@
     <string name="backup_export_failed">数据备份导出失败</string>
     <string name="backup_import_success">数据备份已导入</string>
     <string name="backup_import_failed">数据备份导入失败，请确认文件是否正确</string>
+    <string name="home_category_layout">首页栏目排序与隐藏</string>
+    <string name="home_category_layout_summary">当前显示 %1$d / %2$d 个栏目</string>
+    <string name="home_category_layout_dialog_summary">长按并拖动栏目可调整顺序，关闭开关即可隐藏栏目。</string>
+    <string name="debug">调试</string>
+    <string-array name="loading_hints">
+        <item>哼，才、才没有让你久等呢！只是数据跑得慢了一点点而已！</item>
+        <item>笨蛋！盯着看它也不会变快啦！……好啦，再等我三秒钟！</item>
+        <item>（吧唧吧唧）……啊！被发现了！等我咽下这块饼干就来！</item>
+        <item>呜哇！前面的数据线好像缠在一起了！</item>
+        <item>正在努力搬运快乐中……</item>
+        <item>进度条正在偷吃美味小蛋糕，目前进度：2/3个！</item>
+        <item>隐藏着黑暗力量的进度条啊，在我面前显示你真正的速度吧！</item>
+        <item>正在同步异世界信号……哔哔——电波对接成功率 99%！</item>
+        <item>知道你急，但先别急嘛~ 趁现在眨眨眼，休息一下脖子哦！</item>
+        <item>正在调教不听话的小代码，稍等一下下啦！</item>
+        <item>大哥哥，前面的加载条还很长呢……</item>
+        <item>发动魔法卡：强欲之壶！从卡组抽取更多加载时间！</item>
+        <item>您的加载请求已被勇者小队优先处理，当前排名：第1位！</item>
+        <item>搓手手期待ing……</item>
+        <item>◝(⑅•ᴗ•⑅)◜..°♡ 传送中……</item>
+    </string-array>
 </resources>

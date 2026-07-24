@@ -25,36 +25,57 @@ fun LazyGridState.canLoadMore(state: PageLoadingState<*>): Boolean {
 }
 
 /**
- * 将服务器返回的审核状态文本转换为本地化字符串。
+ * 根据服务器返回的审核状态转换为本地化信息和颜色。
  *
  * 服务器返回繁体中文状态值（"已上傳"/"排隊"/"待處理"/"轉檔"），
- * 通过包含匹配映射到对应字符串资源。
+ * 通过包含匹配映射到对应的文本资源和颜色。
  *
  * @receiver 服务器原始审核状态文本
- * @return 本地化后的状态文本，无匹配时返回原值
+ * @return 包含本地化文本和颜色的状态信息
  */
 @Composable
-fun String.toLocalizedReviewStatus(): String = when {
-    contains("已上傳") -> stringResource(R.string.creator_status_uploaded)
-    contains("排隊") -> stringResource(R.string.creator_status_queued)
-    contains("待處理") -> stringResource(R.string.creator_status_pending)
-    contains("轉檔") -> stringResource(R.string.creator_status_transcoding)
-    else -> this
+fun String.toReviewStatusInfo(): ReviewStatusInfo = when {
+    contains("已上傳") -> ReviewStatusInfo(
+        text = stringResource(R.string.creator_status_uploaded),
+        color = Color(0xFF27C93F)
+    )
+    contains("排隊") -> ReviewStatusInfo(
+        text = stringResource(R.string.creator_status_queued),
+        color = Color(0xFFF9A825)
+    )
+    contains("待處理") -> ReviewStatusInfo(
+        text = stringResource(R.string.creator_status_pending),
+        color = Color(0xFFFF9800)
+    )
+    contains("轉檔") -> ReviewStatusInfo(
+        text = stringResource(R.string.creator_status_transcoding),
+        color = Color(0xFF42A5F5)
+    )
+    else -> ReviewStatusInfo(
+        text = this,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /**
- * 根据审核状态返回对应的颜色。
+ * 从 URL 中提取文件名。
  *
- * 颜色映射：已上传→绿色，排队→黄色，待处理→橙色，转档→蓝色。
+ * 提取规则：取最后一个 '/' 之后、第一个 '?' 之前的部分。
  *
- * @receiver 服务器原始审核状态文本
- * @return 对应颜色
+ * @sample "https://example.com/path/file.mp4?token=123" -> "file.mp4"
+ * @sample "https://example.com/path/file.mp4" -> "file.mp4"
+ * @sample "file.mp4" -> "file.mp4"
+ *
+ * @receiver 文件URL
+ * @return 提取的文件名，若 URL 为空则返回空字符串
  */
-@Composable
-fun String.toReviewStatusColor(): Color = when {
-    contains("已上傳") -> Color(0xFF27C93F)
-    contains("排隊") -> Color(0xFFF9A825)
-    contains("待處理") -> Color(0xFFFF9800)
-    contains("轉檔") -> Color(0xFF42A5F5)
-    else -> MaterialTheme.colorScheme.onSurfaceVariant
-}
+fun String.extractFileNameFromUrl(): String =
+    substringAfterLast('/').substringBefore('?')
+
+/**
+ * 审核状态信息（本地化文本 + 颜色）
+ */
+data class ReviewStatusInfo(
+    val text: String,
+    val color: Color,
+)

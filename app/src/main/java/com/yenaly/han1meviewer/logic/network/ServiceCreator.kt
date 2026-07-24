@@ -6,14 +6,17 @@ import com.yenaly.han1meviewer.HA1_GITHUB_API_URL
 import com.yenaly.han1meviewer.HJson
 import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.logic.network.interceptor.CloudflareInterceptor
+import com.yenaly.han1meviewer.logic.network.interceptor.GetchuInterceptor
 import com.yenaly.han1meviewer.logic.network.interceptor.SpeedLimitInterceptor
 import com.yenaly.han1meviewer.logic.network.interceptor.UrlLoggingInterceptor
 import com.yenaly.han1meviewer.logic.network.interceptor.UserAgentInterceptor
 import com.yenaly.yenaly_libs.utils.applicationContext
 import com.yenaly.yenaly_libs.utils.unsafeLazy
 import okhttp3.Cache
+import okhttp3.CookieJar
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import retrofit2.Retrofit
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -49,6 +52,12 @@ object ServiceCreator {
         .build()
         .create(T::class.java)
 
+    inline fun <reified T> createGetchu(baseUrl: String): T = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(getchuClient)
+        .build()
+        .create(T::class.java)
+
     /**
      * OkHttpClient
      */
@@ -61,16 +70,32 @@ object ServiceCreator {
     var downloadClient: OkHttpClient = buildDownloadClient()
         private set
 
+    var getchuClient: OkHttpClient = buildGetchuClient()
+        private set
+
     /**
      * Rebuild OkHttpClient
      */
     fun rebuildOkHttpClient() {
         hClient = buildHClient()
+        getchuClient = buildGetchuClient()
+    }
+
+    private fun buildGetchuClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .addInterceptor(UrlLoggingInterceptor())
+            .addInterceptor(GetchuInterceptor())
+            .cookieJar(CookieJar.NO_COOKIES)
+            .proxySelector(HProxySelector())
+            .dns(dns)
+            .build()
     }
 
     private fun buildDownloadClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
+            .protocols(listOf(Protocol.HTTP_1_1))
             .addInterceptor(UserAgentInterceptor)
             .addInterceptor(downloadSpeedLimitInterceptor)
             .dns(dns)

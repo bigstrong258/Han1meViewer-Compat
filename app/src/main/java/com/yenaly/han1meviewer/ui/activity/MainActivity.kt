@@ -45,7 +45,7 @@ import com.yenaly.han1meviewer.ui.navigation.main.AccountRoute
 import com.yenaly.han1meviewer.ui.navigation.main.VideoRoute
 import com.yenaly.han1meviewer.ui.navigation.settings.SettingsPreferenceKeys
 import com.yenaly.han1meviewer.ui.screen.main.MainActivityContent
-import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
+import com.yenaly.han1meviewer.ui.screen.home.homepage.HomePageViewModel
 import com.yenaly.han1meviewer.util.showAlertDialog
 import com.yenaly.han1meviewer.videoUrlRegex
 import com.yenaly.yenaly_libs.ActivityManager
@@ -62,7 +62,7 @@ import java.util.Locale
  */
 class MainActivity : FrameActivity(), PermissionRequester {
 
-    val viewModel by viewModels<MainViewModel>()
+    val viewModel by viewModels<HomePageViewModel>()
 
     lateinit var navController: NavHostController
     private var showAuthGuard by mutableStateOf(true)

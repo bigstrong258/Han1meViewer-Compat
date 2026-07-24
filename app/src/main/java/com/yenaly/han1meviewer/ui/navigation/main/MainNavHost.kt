@@ -29,6 +29,7 @@ import com.yenaly.han1meviewer.ui.navigation.settings.HKeyframeSettingsRoute
 import com.yenaly.han1meviewer.ui.navigation.settings.HKeyframeSettingsRouteScreen
 import com.yenaly.han1meviewer.ui.navigation.settings.HKeyframesRoute
 import com.yenaly.han1meviewer.ui.navigation.settings.HKeyframesRouteScreen
+import com.yenaly.han1meviewer.ui.navigation.settings.HKeyframesTopBarActions
 import com.yenaly.han1meviewer.ui.navigation.settings.HomeSettingsRoute
 import com.yenaly.han1meviewer.ui.navigation.settings.HomeSettingsRouteScreen
 import com.yenaly.han1meviewer.ui.navigation.settings.MpvPlayerSettingsRoute
@@ -243,12 +244,18 @@ fun MainNavHost(
             }
         }
         composable<HKeyframesRoute> {
+            var showImportDialog by remember { mutableStateOf(false) }
             SettingsScaffold(
                 navController = navController,
                 fallbackDestination = HKeyframeSettingsRoute,
+                actions = {
+                    HKeyframesTopBarActions(onImportClick = { showImportDialog = true })
+                },
             ) {
                 HKeyframesRouteScreen(
                     onOpenVideo = onNavigateToVideo,
+                    showImportDialog = showImportDialog,
+                    onImportDialogDismiss = { showImportDialog = false },
                 )
             }
         }
@@ -284,10 +291,27 @@ fun MainNavHost(
             PreviewRouteScreen(
                 activity = activity,
                 onBack = onBack,
+                onNavigateToGetchuPreview = {
+                    navController.navigateSafely(GetchuPreviewRoute)
+                },
                 onNavigateToPreviewComment = { date, dateCode ->
                     navController.navigateSafely(PreviewCommentRoute(date, dateCode))
                 },
                 onNavigateToVideo = onNavigateToVideo,
+            )
+        }
+        composable<GetchuPreviewRoute> {
+            GetchuPreviewRouteScreen(
+                onBack = onBack,
+                onNavigateToDetail = { id -> navController.navigateSafely(GetchuPreviewDetailRoute(id)) },
+            )
+        }
+        composable<GetchuPreviewDetailRoute> {
+            GetchuPreviewDetailRouteScreen(
+                route = it.toRoute(),
+                onBack = onBack,
+                onNavigateToDetail = { id -> navController.navigateSafely(GetchuPreviewDetailRoute(id)) },
+                onNavigateToVideoUrl = { url -> navController.navigateSafely(VideoRoute("-1", url)) },
             )
         }
         composable<PreviewCommentRoute> {

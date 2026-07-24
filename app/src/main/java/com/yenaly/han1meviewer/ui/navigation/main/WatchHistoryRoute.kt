@@ -3,7 +3,7 @@ package com.yenaly.han1meviewer.ui.navigation.main
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yenaly.han1meviewer.ui.screen.home.WatchHistoryTabScreen
-import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
+import com.yenaly.han1meviewer.ui.screen.home.homepage.HomePageViewModel
 import com.yenaly.han1meviewer.ui.viewmodel.OnlineWatchHistoryViewModel
 
 @Composable
@@ -11,7 +11,7 @@ fun WatchHistoryRouteScreen(
     onBack: () -> Unit,
     onNavigateToVideo: (String) -> Unit,
 ) {
-    val localViewModel: MainViewModel = viewModel()
+    val localViewModel: HomePageViewModel = viewModel()
     val onlineViewModel: OnlineWatchHistoryViewModel = viewModel()
     WatchHistoryTabScreen(
         localHistoriesFlow = localViewModel.loadAllWatchHistories(),

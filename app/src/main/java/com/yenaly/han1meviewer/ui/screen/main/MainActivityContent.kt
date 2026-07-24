@@ -23,16 +23,17 @@ import com.yenaly.han1meviewer.Preferences
 import com.yenaly.han1meviewer.R
 import com.yenaly.han1meviewer.logic.exception.CloudFlareBlockedException
 import com.yenaly.han1meviewer.logic.model.github.Latest
-import com.yenaly.han1meviewer.logic.state.WebsiteState
+import com.yenaly.han1meviewer.logic.state.PageState
 import com.yenaly.han1meviewer.ui.activity.MainActivity
 import com.yenaly.han1meviewer.ui.component.UpdateDialog
+import com.yenaly.han1meviewer.ui.component.UsageNoticeDialog
 import com.yenaly.han1meviewer.ui.navigation.main.MainDestinationSpec
 import com.yenaly.han1meviewer.ui.navigation.main.MainNavHost
 import com.yenaly.han1meviewer.ui.navigation.main.handleMainIntent
 import com.yenaly.han1meviewer.ui.navigation.main.navigateDrawerDestination
 import com.yenaly.han1meviewer.ui.theme.HanimeTheme
 import com.yenaly.han1meviewer.ui.viewmodel.AppViewModel
-import com.yenaly.han1meviewer.ui.viewmodel.MainViewModel
+import com.yenaly.han1meviewer.ui.screen.home.homepage.HomePageViewModel
 import com.yenaly.han1meviewer.util.getUpdateIfExists
 import com.yenaly.han1meviewer.util.installApkPackage
 import com.yenaly.han1meviewer.util.requestPostNotificationPermission
@@ -46,7 +47,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun MainActivityContent(
     activity: MainActivity,
-    viewModel: MainViewModel,
+    viewModel: HomePageViewModel,
     pendingNavigationRequests: Flow<Intent>,
     showAuthGuard: Boolean,
     onOpenAccount: () -> Unit,
@@ -61,22 +62,23 @@ fun MainActivityContent(
         val scope = rememberCoroutineScope()
         var currentMainDestination by remember { mutableStateOf(MainDestinationSpec.Home) }
         var pendingUpdate by remember { mutableStateOf<Latest?>(null) }
+        var showUsageNotice by remember { mutableStateOf(!Preferences.usageNoticeAccepted) }
         val isDrawerOpen =
             drawerState.currentValue == DrawerValue.Open || drawerState.targetValue == DrawerValue.Open
 
         val homeState by viewModel.homePageFlow.collectAsStateWithLifecycle()
         val isLoggedIn by Preferences.loginStateFlow.collectAsStateWithLifecycle()
         val headerAvatarUrl = if (isLoggedIn) {
-            (homeState as? WebsiteState.Success)?.info?.avatarUrl
+            (homeState as? PageState.Success)?.info?.page?.avatarUrl
         } else {
             null
         }
         val headerUsername = if (isLoggedIn) {
-            (homeState as? WebsiteState.Success)?.info?.username
+            (homeState as? PageState.Success)?.info?.page?.username
         } else {
             null
         }
-        val headerIsLoading = isLoggedIn && homeState is WebsiteState.Loading
+        val headerIsLoading = isLoggedIn && homeState is PageState.Loading
         val selectedDrawerDestination = currentMainDestination.drawerDestination
 
         LaunchedEffect(composeNavController) {
@@ -94,13 +96,13 @@ fun MainActivityContent(
             }
         }
         LaunchedEffect(viewModel) {
-            viewModel.sessionExpiredMessage.collect { message ->
-                showShortToast(message)
+            viewModel.sessionExpiredMessage.collect { event ->
+                event.message?.let(::showShortToast) ?: showShortToast(event.fallbackResId)
             }
         }
         LaunchedEffect(homeState) {
-            if (homeState is WebsiteState.Error) {
-                val throwable = (homeState as WebsiteState.Error).throwable
+            if (homeState is PageState.Error) {
+                val throwable = (homeState as PageState.Error).throwable
                 if (throwable is CloudFlareBlockedException) {
                     Log.e("error", "被屏蔽时的处理")
                 }
@@ -181,6 +183,14 @@ fun MainActivityContent(
                         },
                     )
                 }
+                UsageNoticeDialog(
+                    visible = showUsageNotice,
+                    onAccepted = {
+                        Preferences.usageNoticeAccepted = true
+                        showUsageNotice = false
+                    },
+                    onDeclined = { activity.finish() },
+                )
             }
         }
     }
