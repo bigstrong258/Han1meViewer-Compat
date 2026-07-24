@@ -1,6 +1,6 @@
 # Han1meViewer Compat for Huawei / HarmonyOS
 
-本仓库是基于已归档的 [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer) 最终版本维护的 Huawei / HarmonyOS 兼容分支，主要用于解决部分华为设备因系统 WebView 版本较低而无法通过 Cloudflare 验证的问题。
+本仓库是基于现已删除的社区上游 `misaka10032w/Han1meViewer` 在删库前公开的最终版本维护的 Huawei / HarmonyOS 兼容分支，主要用于解决部分华为设备因系统 WebView 版本较低而无法通过 Cloudflare 验证的问题。
 
 当前正式版本：[v0.27.0-harmonyos-r1](https://github.com/bigstrong258/Han1meViewer-Compat/releases/tag/v0.27.0-harmonyos-r1)
 
@@ -54,7 +54,7 @@
 
 ## 与上游的关系
 
-上游仓库已于 2026 年 7 月归档。本项目已经合并其归档前截至 `v1.0.0-release+26071512` 的最终 Compose 更新，并在此基础上继续维护 Firebase、发布流程和 Huawei / HarmonyOS WebView 兼容逻辑。由于上游不再更新，后续修复和兼容性反馈请直接提交到本仓库。
+曾同步的社区上游仓库现已删除，本 README 不再提供失效链接。本项目已完整保留其删库前截至 `v1.0.0-release+26071512` 的最终 Compose 更新与 Git 提交历史，并在此基础上继续维护 Firebase、发布流程和 Huawei / HarmonyOS WebView 兼容逻辑。后续修复和兼容性反馈请直接提交到本仓库。
 
 ---
 
@@ -382,7 +382,7 @@ Han1meViewer/
 ### 维护与致谢
 
 - [YenalyLiew/Han1meViewer](https://github.com/YenalyLiew/Han1meViewer)：原始项目与 Apache 2.0 授权来源。
-- [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer)：本兼容分支所同步的最终 Compose 上游。
+- `misaka10032w/Han1meViewer`（仓库已删除）：本兼容分支所同步的最终 Compose 社区上游，相关贡献与提交历史保留在本仓库中。
 - [JonaNorman/WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)：应用内 WebView 内核升级方案。
 - **OpenAI Codex**：协助完成上游合并、Firebase 与签名 CI 恢复、构建及崩溃诊断、正式发布和文档维护。Codex 是 AI 开发工具，不代表真人维护者或独立 GitHub 账号。
 
