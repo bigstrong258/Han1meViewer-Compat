@@ -23,6 +23,12 @@
 - 已移除上游签名一致性检查，支持本 fork 独立构建与发布。
 - release 构建已加入 WebViewUpgrade 相关 ProGuard / R8 keep 规则，避免混淆导致内核替换失效。
 
+### 方案来源说明
+
+- 应用内免 Root 挂载新版 WebView 内核的底层能力来自 [JonaNorman/WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)。
+- 本 fork 最初借鉴的是 GitHub 用户 [HitHate](https://github.com/HitHate) 于 2026 年 3 月 13 日在已删除社区上游 Discussion #319《鸿蒙4.2使用WebViewUpgrade把webview更新成功了》中分享并验证的 Han1meViewer / HarmonyOS 4.2 实践方案。原讨论已随仓库删除，因此不再提供失效链接。
+- 本分支自 2026 年 3 月 17 日起在上述方案基础上完成接入，此后继续处理内核打包压缩、设备分流、重启提示、构建签名与兼容性保护。此前若有表述使人误以为这些基础方案由本 fork 首创，以本说明为准。
+
 ## 首次启动与 Cloudflare 验证
 
 由于 Android 系统在单个进程生命周期内只会初始化一次 WebView，首次准备内置 WebView 后，通常需要手动清理后台并重新打开应用：
@@ -384,6 +390,7 @@ Han1meViewer/
 - [YenalyLiew/Han1meViewer](https://github.com/YenalyLiew/Han1meViewer)：原始项目与 Apache 2.0 授权来源。
 - `misaka10032w/Han1meViewer`（仓库已删除）：本兼容分支所同步的最终 Compose 社区上游，相关贡献与提交历史保留在本仓库中。
 - [JonaNorman/WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)：应用内 WebView 内核升级方案。
+- [HitHate](https://github.com/HitHate)：在已删除社区上游的 Discussion #319 中分享并验证 Han1meViewer / HarmonyOS 4.2 的适配实践，本 fork 的最初实现借鉴了该方案。
 - **OpenAI Codex**：协助完成上游合并、Firebase 与签名 CI 恢复、构建及崩溃诊断、正式发布和文档维护。Codex 是 AI 开发工具，不代表真人维护者或独立 GitHub 账号。
 
 ## 🧩 TODO
