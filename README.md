@@ -1,6 +1,6 @@
 # Han1meViewer Compat for Huawei / HarmonyOS
 
-本仓库是基于现已删除的社区上游 `misaka10032w/Han1meViewer` 在删库前公开的最终版本维护的 Huawei / HarmonyOS 兼容分支，主要用于解决部分华为设备因系统 WebView 版本较低而无法通过 Cloudflare 验证的问题。
+本仓库是基于社区上游 [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer) 维护的 Huawei / HarmonyOS 兼容分支，主要用于解决部分华为设备因系统 WebView 版本较低而无法通过 Cloudflare 验证的问题。
 
 当前正式版本：[v0.27.0-harmonyos-r1](https://github.com/bigstrong258/Han1meViewer-Compat/releases/tag/v0.27.0-harmonyos-r1)
 
@@ -26,7 +26,7 @@
 ### 方案来源说明
 
 - 应用内免 Root 挂载新版 WebView 内核的底层能力来自 [JonaNorman/WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)。
-- 本 fork 最初借鉴的是 GitHub 用户 [HitHate](https://github.com/HitHate) 于 2026 年 3 月 13 日在已删除社区上游 Discussion #319《鸿蒙4.2使用WebViewUpgrade把webview更新成功了》中分享并验证的 Han1meViewer / HarmonyOS 4.2 实践方案。原讨论已随仓库删除，因此不再提供失效链接。
+- 本 fork 最初借鉴的是 GitHub 用户 [HitHate](https://github.com/HitHate) 于 2026 年 3 月 13 日在上游 [Discussion #319《鸿蒙4.2使用WebViewUpgrade把webview更新成功了》](https://github.com/misaka10032w/Han1meViewer/discussions/319) 中分享并验证的 Han1meViewer / HarmonyOS 4.2 实践方案。
 - 本分支自 2026 年 3 月 17 日起在上述方案基础上完成接入，此后继续处理内核打包压缩、设备分流、重启提示、构建签名与兼容性保护。此前若有表述使人误以为这些基础方案由本 fork 首创，以本说明为准。
 
 ## 首次启动与 Cloudflare 验证
@@ -60,7 +60,7 @@
 
 ## 与上游的关系
 
-曾同步的社区上游仓库现已删除，本 README 不再提供失效链接。本项目已完整保留其删库前截至 `v1.0.0-release+26071512` 的最终 Compose 更新与 Git 提交历史，并在此基础上继续维护 Firebase、发布流程和 Huawei / HarmonyOS WebView 兼容逻辑。后续修复和兼容性反馈请直接提交到本仓库。
+社区上游 [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer) 在短暂关闭后现已重新开放并恢复维护。本兼容分支继续跟随上游提交，本次已同步至合并 [PR #445](https://github.com/misaka10032w/Han1meViewer/pull/445) 后的 `e359d104`，同时独立维护 Firebase、发布流程和 Huawei / HarmonyOS WebView 兼容逻辑。通用功能问题可优先向上游反馈；仅涉及本分支的 Huawei / HarmonyOS、Firebase、签名或发布问题请提交到本仓库。
 
 ---
 
@@ -388,9 +388,9 @@ Han1meViewer/
 ### 维护与致谢
 
 - [YenalyLiew/Han1meViewer](https://github.com/YenalyLiew/Han1meViewer)：原始项目与 Apache 2.0 授权来源。
-- `misaka10032w/Han1meViewer`（仓库已删除）：本兼容分支所同步的最终 Compose 社区上游，相关贡献与提交历史保留在本仓库中。
+- [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer)：本兼容分支持续同步的 Compose 社区上游。
 - [JonaNorman/WebViewUpgrade](https://github.com/JonaNorman/WebViewUpgrade)：应用内 WebView 内核升级方案。
-- [HitHate](https://github.com/HitHate)：在已删除社区上游的 Discussion #319 中分享并验证 Han1meViewer / HarmonyOS 4.2 的适配实践，本 fork 的最初实现借鉴了该方案。
+- [HitHate](https://github.com/HitHate)：在上游 [Discussion #319](https://github.com/misaka10032w/Han1meViewer/discussions/319) 中分享并验证 Han1meViewer / HarmonyOS 4.2 的适配实践，本 fork 的最初实现借鉴了该方案。
 - **OpenAI Codex**：协助完成上游合并、Firebase 与签名 CI 恢复、构建及崩溃诊断、正式发布和文档维护。Codex 是 AI 开发工具，不代表真人维护者或独立 GitHub 账号。
 
 ## 🧩 TODO

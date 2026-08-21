@@ -164,7 +164,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.ui.ui.tooling.preview)
     implementation(libs.androidx.ui)
-    androidTestImplementation(platform(libs.compose.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.compose.ui.ui.tooling)
     implementation(libs.androidx.navigation.compose)
@@ -229,6 +228,7 @@ dependencies {
     androidTestImplementation(libs.test.junit)
     androidTestImplementation(libs.test.espresso.core)
 
+    implementation(libs.crashx)
     // debugImplementation(libs.leak.canary)
 
     // WebviewUpgrade
