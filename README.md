@@ -2,14 +2,15 @@
 
 本仓库是基于社区上游 [misaka10032w/Han1meViewer](https://github.com/misaka10032w/Han1meViewer) 维护的 Huawei / HarmonyOS 兼容分支，主要用于解决部分华为设备因系统 WebView 版本较低而无法通过 Cloudflare 验证的问题。
 
-当前正式版本：[v0.27.0-harmonyos-r1](https://github.com/bigstrong258/Han1meViewer-Compat/releases/tag/v0.27.0-harmonyos-r1)
+当前正式版本：[v0.27.0-harmonyos-r2](https://github.com/bigstrong258/Han1meViewer-Compat/releases/tag/v0.27.0-harmonyos-r2%2B26082107)
 
 ## 下载与安装
 
-- 正式版 APK：[Han1meViewer-v0.27.0-release+26072403.apk](https://github.com/bigstrong258/Han1meViewer-Compat/releases/download/v0.27.0-harmonyos-r1/Han1meViewer-v0.27.0-release%2B26072403.apk)
+- 正式版 APK：[Han1meViewer-v0.27.0-release+26082107.apk](https://github.com/bigstrong258/Han1meViewer-Compat/releases/download/v0.27.0-harmonyos-r2%2B26082107/Han1meViewer-v0.27.0-release%2B26082107.apk)
 - GitHub Releases 是本项目唯一的正式下载渠道；Pre-release 仅用于兼容性测试。
-- 从 `v0.27.0 Preview 1` 升级时可以直接覆盖安装。
+- 从 `v0.27.0 Preview 1` 或 `v0.27.0-harmonyos-r1` 升级时可以直接覆盖安装。
 - `v0.26.0` 及更早版本使用旧签名，无法覆盖安装正式版。请先备份需要的数据，再卸载旧版；卸载会清除应用数据。
+- r2 APK SHA-256：`8BBAA0A4058DD3EBDF6372E4BE4008F9C944D1FF745F4217018C0939DC2D2804`。
 - 新长期签名证书 SHA-256：`39798C23DEB3497BF7A8EDD042EF93803F921A7CDD354F5FC775008C467D5B4D`。
 
 ## Huawei / HarmonyOS 兼容说明
@@ -54,7 +55,7 @@
 - Android / HarmonyOS 版本
 - 系统 WebView 版本
 - Han1meViewer 版本号
-- 是从旧签名版本全新安装，还是从 `v0.27.0 Preview 1` 覆盖安装
+- 是从旧签名版本全新安装，还是从 `v0.27.0 Preview 1` / `v0.27.0-harmonyos-r1` 覆盖安装
 - 异常发生前正在进行的操作
 - 如果方便，请附截图、录屏或 logcat
 
