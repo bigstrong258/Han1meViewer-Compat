@@ -50,7 +50,8 @@ object FirebaseConstants {
     const val ENABLE_CI_UPDATE = "enable_ci_update"
 
     val remoteConfigDefaults: Map<String, Any> = mapOf(
-        ENABLE_CI_UPDATE to true
+        // Actions artifacts require credentials that must not be embedded in a public APK.
+        ENABLE_CI_UPDATE to false
     )
 
     // </editor-fold>
